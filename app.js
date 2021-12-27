@@ -1,88 +1,125 @@
 // Tetris rules
 // https://tetris.fandom.com/wiki/Tetris_Guideline
 
+
+
 window.addEventListener("DOMContentLoaded", initNewGame);
 
 function initNewGame() {
     // definitions
     const tetrisCanvas = document.querySelector(".tetris-canvas");
-    tetrisCanvas.height = 480;
-    tetrisCanvas.width = 240;
+    const GAME_HEIGHT = 480;
+    const GAME_WIDTH = 240;
+    tetrisCanvas.height = GAME_HEIGHT;
+    tetrisCanvas.width = GAME_WIDTH;
     const ctx = tetrisCanvas.getContext("2d");
-    const BLOCK_SIZE = 24;
-    const blockArr = [];
+    const BLOCK_SIZE = GAME_WIDTH/10;
+    let blockArr = [];
     let fallTimerID;
+    let gameTimerID;
 
+    const mouse = {
+        x: undefined,
+        y: undefined
+    }
 
 
     // classes
     class Block {
-        constructor (x, y) {
-            this.x = x;
-            this.y = y;
-
-            // ctx.rect(this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
-            // ctx.stroke();
-            // ctx.stroke();
-
-            blockArr.push(this);
-
+        constructor (posX, posY) {
+    
+            this.position = {
+                x: posX,
+                y: posY
+            }
+    
+            // blockArr.push(this);
+    
         }
-
+    
         draw() {
             ctx.strokeStyle = "green";
-            ctx.rect(this.x, this.y, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.rect(this.position.x, this.position.y, BLOCK_SIZE, BLOCK_SIZE);
             ctx.stroke();
         }
-
+    
         moveDown() {
-            this.y += BLOCK_SIZE;
+            if (this.position.y < GAME_HEIGHT-BLOCK_SIZE) {
+                this.position.y += BLOCK_SIZE;
+            }
         }
-        shiftLeft() {
 
-        }
         shiftRight() {
-
+            if (this.position.x <= GAME_WIDTH-BLOCK_SIZE) {
+                this.position.x += BLOCK_SIZE;
+            }
         }
-        // softLock() {
-
-        // }
-        // hardLock() {
-
-        // }
-        // rotateCW() {
-
-        // }
-        // rotateCCW() {
-            
-        // }
     }
-
 
     // functions
 
-    function fallBlocks() {
-        console.log(ctx);
-
-        ctx.clearRect(0, 0, tetrisCanvas.width, tetrisCanvas.height);
-        // ctx.clearRect(0,0,tetrisCanvas.width, tetrisCanvas.height);
-        blockArr[0].moveDown();
-        blockArr[0].draw();
-
-        console.log(blockArr[0].y);
-
-        if (blockArr[0].y < 456) {
-            setTimeout(() => {
-                window.requestAnimationFrame(fallBlocks);
-            }, 1000);
-        }
+    function drawBlock() {
+        // console.log("x: "+event.x,"y: "+event.y);
+        // console.log("cx: "+(event.x-200),"cy: "+(event.y-449));
+        const blockPos = blockArr[0].position;
+        const block = blockArr[0];
+        block.moveDown();
+        ctx.fillStyle = "green";
+        ctx.fillRect(blockPos.x, blockPos.y, BLOCK_SIZE, BLOCK_SIZE);
+        // ctx.stroke();
     }
 
-    // main
+    // function gameLoop() {
+    //     ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+    //     setTimeout(drawBlock,1000);
+    //     requestAnimationFrame(gameLoop);
+    // }
+    function gameLoop() {
+        ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+        drawBlock();
+    }
+    
+    // function gameLoop() {
+    //     ctx.clearRect(0, 0, GAME_HEIGHT, GAME_WIDTH);
+    //     blockArr[0].moveDown();
+    //     blockArr[0].draw();
+    // }
 
-    new Block(0,-BLOCK_SIZE);
+    // game
 
-    fallBlocks();
+
+
+    // new Block(0,-BLOCK_SIZE);
+    // new Block(100,100);
+
+    // ctx.clearRect(0, 0, GAME_HEIGHT, GAME_WIDTH);
+    // blockArr[0].moveDown();
+    // blockArr[0].draw();
+    
+    // requestAnimationFrame(gameLoop);
+
+
+    // tetrisCanvas.addEventListener("click", (event) => {
+    //     console.log("click!");
+    //     mouse.x = event.x-200;
+    //     mouse.y = event.y -449;
+    //     // drawBlock();
+    // });
+    // tetrisCanvas.addEventListener("mousemove", (event) => {
+    //     console.log("click!");
+    //     mouse.x = event.x-200;
+    //     mouse.y = event.y-449;
+    //     // drawBlock();
+    // });
+
+    blockArr.push(new Block(0,-BLOCK_SIZE));
+
+    gameTimerID = setInterval(gameLoop, 1000);
+
+    document.addEventListener("keyup", (event) => {
+        if (event.keyCode == "39") {
+            blockArr[0].shiftRight();
+        }
+    });
 }
-
 //bottom is y = 456;
