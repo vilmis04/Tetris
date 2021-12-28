@@ -42,7 +42,8 @@ body {
 }
 
 .main-panel {
-    width: 200px;
+    max-width: 200px;
+    min-width: 96px;
     height: 480px;
     border: 1px solid black;
     /* background: green; */
