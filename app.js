@@ -6,7 +6,9 @@
 window.addEventListener("DOMContentLoaded", initNewGame);
 
 function initNewGame() {
+
     // definitions
+
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const GAME_HEIGHT = 480;
     const GAME_WIDTH = 240;
@@ -25,8 +27,10 @@ function initNewGame() {
 
 
     // classes
+
     class Block {
-        constructor (posX, posY) {
+        constructor (posX, posY, collLimit) {
+            this.collLimit = collLimit;
             this.position = {
                 x: posX,
                 y: posY
@@ -58,10 +62,16 @@ function initNewGame() {
     class I_Block {
         constructor () {
             this.color = "cyan";
+            let collLimit = 0;
             ctx.fillStyle = this.color;
             for (let i=0; i<4; i++) {
+                if (i == 0 || i == 3) {
+                    collLimit = 1;
+                } else {
+                    collLimit = 2;
+                }
                 let xPos = 3*BLOCK_SIZE+i*BLOCK_SIZE;
-                blockArr.push(new Block(xPos,-BLOCK_SIZE));
+                blockArr.push(new Block(xPos,-BLOCK_SIZE,collLimit));
             }
         }
     }
@@ -76,8 +86,15 @@ function initNewGame() {
         });
     }
 
-    function detectCollision() {
+    function detectCollision(block) {
+        let collCounter = 0;
+
         
+        if (collCounter > block.collLimit) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function gameLoop() {
@@ -93,12 +110,13 @@ function initNewGame() {
     // blockArr.push(new Block(2*BLOCK_SIZE,-BLOCK_SIZE));
     // blockArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE));
     new I_Block;
-    // setTimeout(() => {
-    //     new I_Block;
-    // }, 21000);
+    setTimeout(() => {
+        new I_Block;
+    }, 21000);
 
-    gameTimerID = setInterval(() => {
-        blockArr.slice(-4).forEach(block => block.moveDown());
+    fallTimerID = setInterval(() => {
+        let activeTetrimino = blockArr.slice(-4);
+        activeTetrimino.forEach(block => block.moveDown());
     }, 1000);
     gameLoop();
 
