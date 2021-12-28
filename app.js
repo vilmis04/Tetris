@@ -20,12 +20,6 @@ function initNewGame() {
     let fallTimerID;
     let gameTimerID;
 
-    const mouse = {
-        x: undefined,
-        y: undefined
-    }
-
-
     // classes
 
     class Block {
@@ -87,10 +81,28 @@ function initNewGame() {
     }
 
     function detectCollision(block) {
-        let collCounter = 0;
+        // const activeBlock = {
+        //     x: block.position.x,
+        //     y: block.position.y
+        // }
+        const active = block.position;
 
-        
-        if (collCounter > block.collLimit) {
+        let collArr = blockArr.filter(item => {
+            let itemPos = item.position;
+            if (active.x <= itemPos.x + BLOCK_SIZE &&
+                active.x + BLOCK_SIZE >= itemPos.x &&
+                active.y <= itemPos.y + BLOCK_SIZE &&
+                active.y + BLOCK_SIZE >= itemPos.y) {
+                    return true;
+                }
+        });
+
+        console.log("Collision no.: "+collArr.length-1);
+        // alert("Collision no.: "+collArr.length);
+
+        if (collArr.length-1 > block.collLimit) {
+            // alert("Collision detected!");
+            console.log("Collision detected! ");
             return true;
         } else {
             return false;
@@ -99,6 +111,7 @@ function initNewGame() {
 
     function gameLoop() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+        activeTetrimino = blockArr.slice(-4);
         drawBlock();
         requestAnimationFrame(gameLoop);
     }
@@ -116,7 +129,12 @@ function initNewGame() {
 
     fallTimerID = setInterval(() => {
         let activeTetrimino = blockArr.slice(-4);
-        activeTetrimino.forEach(block => block.moveDown());
+        activeTetrimino.forEach(block => {
+            if (detectCollision(block)) {
+                new I_Block;
+            }
+            block.moveDown();
+        });
     }, 1000);
     gameLoop();
 
