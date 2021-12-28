@@ -27,14 +27,10 @@ function initNewGame() {
     // classes
     class Block {
         constructor (posX, posY) {
-    
             this.position = {
                 x: posX,
                 y: posY
             }
-    
-            // blockArr.push(this);
-    
         }
     
         draw() {
@@ -42,13 +38,11 @@ function initNewGame() {
             ctx.rect(this.position.x, this.position.y, BLOCK_SIZE, BLOCK_SIZE);
             ctx.stroke();
         }
-    
         moveDown() {
             if (this.position.y < GAME_HEIGHT-BLOCK_SIZE) {
                 this.position.y += BLOCK_SIZE;
             }
         }
-
         shiftRight() {
             if (this.position.x < GAME_WIDTH-BLOCK_SIZE) {
                 this.position.x += BLOCK_SIZE;
@@ -61,80 +55,67 @@ function initNewGame() {
         }
     }
 
+    class I_Block {
+        constructor () {
+            this.color = "cyan";
+            ctx.fillStyle = this.color;
+            for (let i=0; i<4; i++) {
+                let xPos = 3*BLOCK_SIZE+i*BLOCK_SIZE;
+                blockArr.push(new Block(xPos,-BLOCK_SIZE));
+            }
+        }
+    }
+
     // functions
 
     function drawBlock() {
-        // console.log("x: "+event.x,"y: "+event.y);
-        // console.log("cx: "+(event.x-200),"cy: "+(event.y-449));
-        const blockPos = blockArr[0].position;
-        // const block = blockArr[0];
-        // block.moveDown();
-        ctx.fillStyle = "green";
-        ctx.fillRect(blockPos.x, blockPos.y, BLOCK_SIZE, BLOCK_SIZE);
-        // ctx.stroke();
+        blockArr.forEach(block => {
+            blockPos = block.position;
+            ctx.fillStyle = block.color;
+            ctx.fillRect(blockPos.x, blockPos.y, BLOCK_SIZE, BLOCK_SIZE);
+        });
     }
 
-    // function gameLoop() {
-    //     ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
-    //     setTimeout(drawBlock,1000);
-    //     requestAnimationFrame(gameLoop);
-    // }
+    function detectCollision() {
+        
+    }
+
     function gameLoop() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
         drawBlock();
         requestAnimationFrame(gameLoop);
     }
     
-    // function gameLoop() {
-    //     ctx.clearRect(0, 0, GAME_HEIGHT, GAME_WIDTH);
-    //     blockArr[0].moveDown();
-    //     blockArr[0].draw();
-    // }
-
     // game
 
+    // blockArr.push(new Block(0,-BLOCK_SIZE));
+    // blockArr.push(new Block(BLOCK_SIZE,-BLOCK_SIZE));
+    // blockArr.push(new Block(2*BLOCK_SIZE,-BLOCK_SIZE));
+    // blockArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE));
+    new I_Block;
+    // setTimeout(() => {
+    //     new I_Block;
+    // }, 21000);
 
-
-    // new Block(0,-BLOCK_SIZE);
-    // new Block(100,100);
-
-    // ctx.clearRect(0, 0, GAME_HEIGHT, GAME_WIDTH);
-    // blockArr[0].moveDown();
-    // blockArr[0].draw();
-    
-    // requestAnimationFrame(gameLoop);
-
-
-    // tetrisCanvas.addEventListener("click", (event) => {
-    //     console.log("click!");
-    //     mouse.x = event.x-200;
-    //     mouse.y = event.y -449;
-    //     // drawBlock();
-    // });
-    // tetrisCanvas.addEventListener("mousemove", (event) => {
-    //     console.log("click!");
-    //     mouse.x = event.x-200;
-    //     mouse.y = event.y-449;
-    //     // drawBlock();
-    // });
-
-    blockArr.push(new Block(0,-BLOCK_SIZE));
-
-    // gameTimerID = setInterval(gameLoop, 1000);
     gameTimerID = setInterval(() => {
-        blockArr[0].moveDown();
+        blockArr.slice(-4).forEach(block => block.moveDown());
     }, 1000);
     gameLoop();
 
     document.addEventListener("keyup", (event) => {
-        if (event.keyCode == "39") {
-            blockArr[0].shiftRight();
+        if (event.key == "ArrowRight") {
+            let activeTetrimino = blockArr.slice(-4);
+            activeTetrimino.forEach(block => {
+                block.shiftRight();
+            });
         }
     });
     document.addEventListener("keyup", (event) => {
-        if (event.keyCode == "37") {
-            blockArr[0].shiftLeft();
+        if (event.key == "ArrowLeft") {
+            let activeTetrimino = blockArr.slice(-4);
+            activeTetrimino.forEach(block => {
+                block.shiftLeft();
+            });
         }
     });
 }
-//bottom is y = 456;
