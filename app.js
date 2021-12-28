@@ -50,8 +50,13 @@ function initNewGame() {
         }
 
         shiftRight() {
-            if (this.position.x <= GAME_WIDTH-BLOCK_SIZE) {
+            if (this.position.x < GAME_WIDTH-BLOCK_SIZE) {
                 this.position.x += BLOCK_SIZE;
+            }
+        }
+        shiftLeft() {
+            if (this.position.x > 0) {
+                this.position.x -= BLOCK_SIZE;
             }
         }
     }
@@ -62,8 +67,8 @@ function initNewGame() {
         // console.log("x: "+event.x,"y: "+event.y);
         // console.log("cx: "+(event.x-200),"cy: "+(event.y-449));
         const blockPos = blockArr[0].position;
-        const block = blockArr[0];
-        block.moveDown();
+        // const block = blockArr[0];
+        // block.moveDown();
         ctx.fillStyle = "green";
         ctx.fillRect(blockPos.x, blockPos.y, BLOCK_SIZE, BLOCK_SIZE);
         // ctx.stroke();
@@ -77,6 +82,7 @@ function initNewGame() {
     function gameLoop() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
         drawBlock();
+        requestAnimationFrame(gameLoop);
     }
     
     // function gameLoop() {
@@ -114,11 +120,20 @@ function initNewGame() {
 
     blockArr.push(new Block(0,-BLOCK_SIZE));
 
-    gameTimerID = setInterval(gameLoop, 1000);
+    // gameTimerID = setInterval(gameLoop, 1000);
+    gameTimerID = setInterval(() => {
+        blockArr[0].moveDown();
+    }, 1000);
+    gameLoop();
 
     document.addEventListener("keyup", (event) => {
         if (event.keyCode == "39") {
             blockArr[0].shiftRight();
+        }
+    });
+    document.addEventListener("keyup", (event) => {
+        if (event.keyCode == "37") {
+            blockArr[0].shiftLeft();
         }
     });
 }
