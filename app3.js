@@ -19,14 +19,13 @@ function initNewGame() {
     let blockArr = [];
     let activeArr = []
     let fallTimerID;
-    let gameTimerID;
-    let blockGenerated = false;
+    // let gameTimerID;
+    // let blockGenerated = false;
     const normalSpeed = 1000;
     const rapidSpeed = 100;
-    let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
+    let fallSpeed = rapidSpeed;   //time interval (ms) between downward block steps
     // let isArrowDown = false;
-    let orgActiveArr = [];
-
+    let isGameOver = false;
     // classes
 
     class Block {
@@ -64,8 +63,8 @@ function initNewGame() {
     }
     function moveDown () {
         const isBottom = activeArr.some(block => block.y+BLOCK_SIZE == GAME_HEIGHT);
-
-        if (!isBottom && !detectCollision()) {
+ 
+        if (!isBottom && !detectCollision() && !isGameOver) {
         // if (!isBottom) {
             activeArr.forEach(block => block.y += BLOCK_SIZE);
         } else {
@@ -111,10 +110,12 @@ function initNewGame() {
     }
     
     function generateNewBlock() {
-        activeArr.forEach(block => blockArr.push(block));
-        activeArr = [];
-        new I_Block();
-        // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
+        if (!isGameOver) {
+            activeArr.forEach(block => blockArr.push(block));
+            activeArr = [];
+            new I_Block();
+            // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
+        }
     }
 
     function detectCollision() {
@@ -134,7 +135,11 @@ function initNewGame() {
             }
         }
 
-        return isCollision ? true : false;
+        const exceedsTop = activeArr.some(block => block.y < 0);
+        if (isCollision && exceedsTop) {
+            gameOver();
+        }
+        return isCollision;
     }
 
     function rotateBlock() {
@@ -144,6 +149,12 @@ function initNewGame() {
                 rotateIBlock();
                 break;
         }
+    }
+
+    function gameOver() {
+        console.log("Game Over");
+        isGameOver = true;
+        clearInterval(fallTimerID);
     }
 
     function rotateIBlock() {
