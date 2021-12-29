@@ -19,7 +19,8 @@ body {
     border: 1px solid black;
     background-color: grey;
     height: 640px;
-    width: 480px;
+    max-width: 480px;
+    min-width: 380px;
     align-items: center;
     justify-content: space-around;
 }
@@ -42,10 +43,14 @@ body {
 }
 
 .main-panel {
-    max-width: 200px;
-    min-width: 96px;
+    /* max-width: 200px; */
+    min-width: 100px;
     height: 480px;
     border: 1px solid black;
     /* background: green; */
     justify-self: flex-end;
+}
+
+.next-canvas {
+    width: 100px;
 }
