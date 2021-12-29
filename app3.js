@@ -24,7 +24,7 @@ function initNewGame() {
     const normalSpeed = 200;
     const rapidSpeed = 100;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
-    let isArrowDown = false;
+    // let isArrowDown = false;
 
     // classes
 
@@ -57,34 +57,56 @@ function initNewGame() {
     function moveDown () {
         const isBottom = activeArr.some(block => block.y+BLOCK_SIZE == GAME_HEIGHT);
 
-        // if (!isBottom && !detectCollision()) {
-        if (!isBottom) {
+        if (!isBottom && !detectCollision()) {
+        // if (!isBottom) {
             activeArr.forEach(block => block.y += BLOCK_SIZE);
         } else {
-            console.log("Bottom!");
+            // console.log("Bottom!");
             generateNewBlock();
         }
     }
     function shiftRight() {
         const isRight = activeArr.some(block => block.x == GAME_WIDTH-BLOCK_SIZE);
-        if (!isRight) {
+        if (!isRight && !hasObstacle("right")) {
             activeArr.forEach(block => block.x += BLOCK_SIZE);
         }
     }
     function shiftLeft() {
         const isLeft = activeArr.some(block => block.x == 0);
-        if (!isLeft) {
+        if (!isLeft && !hasObstacle("left")) {
             activeArr.forEach(block => block.x -= BLOCK_SIZE);
             
         }
     }
 
+    function hasObstacle(side) {
+        let isCollision = false;
 
+        for (let i = 0; i<activeArr.length; i++) {
+            const active = activeArr[i];
+            for (let j = 0; j<blockArr.length; j++) {
+                const passive = blockArr[j];
+                if (side == "right") {
+                    condition = active.x + BLOCK_SIZE == passive.x;
+                } else {
+                    condition = active.x == passive.x + BLOCK_SIZE;
+                }
+                if (!isCollision &&
+                    condition &&
+                    active.y == passive.y) {
+                        isCollision = true;
+                }
+            }
+        }
+
+        return isCollision ? true : false;
+    }
+    
     function generateNewBlock() {
         activeArr.forEach(block => blockArr.push(block));
         activeArr = [];
         new I_Block();
-        console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
+        // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
     }
 
 
@@ -166,24 +188,7 @@ function initNewGame() {
 
     tetrisCanvas.addEventListener("click", () => {
         generateNewBlock();
-        fallTimerID = setInterval(() => {
-            if (detectCollision()) {
-                generateNewBlock();
-                return;
-            }
-            moveDown();
-
-            // console.log(fallSpeed);
-            // if (!detectCollision()) {
-            //     console.log("not moved");
-            //     moveDown();
-            //     alert("moved");
-            // } else {
-            //     console.log("Collision!");
-            //     generateNewBlock();
-            // }
-            // moveDown();
-        }, fallSpeed);
+        fallTimerID = setInterval(() => moveDown(), fallSpeed);
 
     }, {once: true});
     // tetrisCanvas.addEventListener("click", () => {
