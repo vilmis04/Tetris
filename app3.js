@@ -21,36 +21,44 @@ function initNewGame() {
     let fallTimerID;
     let gameTimerID;
     let blockGenerated = false;
-    const normalSpeed = 200;
+    const normalSpeed = 1000;
     const rapidSpeed = 100;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     // let isArrowDown = false;
+    let orgActiveArr = [];
 
     // classes
 
     class Block {
-        constructor(x,y,color) {
+        constructor(x,y,state) {
+        // constructor(x,y) {
             this.x = x;
             this.y = y;
-            this.color = color;
+            this.state = state;
         }
     }
 
     class I_Block {
         constructor () {
-            this.color = "cyan";
+            this.state = {
+                color: "cyan",
+                type: "I",
+                orientation: "horizontal"
+            }
+
             for (let i=0; i<4; i++) {
                 let xPos = 3*BLOCK_SIZE+i*BLOCK_SIZE;
-                activeArr.push(new Block(xPos,-BLOCK_SIZE,this.color));
+                // activeArr.push(new Block(xPos,-BLOCK_SIZE,this.color));
+                activeArr.push(new Block(xPos,-BLOCK_SIZE,this.state));
             }
         }
     }
 
     // functions
 
-    function drawActiveBlock() {
-        activeArr.forEach(block => {
-            ctx.fillStyle = block.color;
+    function drawBlocks(array) {
+        array.forEach(block => {
+            ctx.fillStyle = block.state.color;
             ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
         });        
     }
@@ -66,7 +74,7 @@ function initNewGame() {
         }
     }
     function shiftRight() {
-        const isRight = activeArr.some(block => block.x == GAME_WIDTH-BLOCK_SIZE);
+        const isRight = activeArr.some(block => block.x+BLOCK_SIZE == GAME_WIDTH);
         if (!isRight && !hasObstacle("right")) {
             activeArr.forEach(block => block.x += BLOCK_SIZE);
         }
@@ -109,14 +117,6 @@ function initNewGame() {
         // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
     }
 
-
-    function drawPassiveBlock() {
-        blockArr.forEach(block => {
-            ctx.fillStyle = block.color;
-            ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
-        });
-    }
-
     function detectCollision() {
         let isCollision = false;
 
@@ -137,11 +137,46 @@ function initNewGame() {
         return isCollision ? true : false;
     }
 
+    function rotateBlock() {
+
+        switch (activeArr[0].state.type) {
+            case "I":
+                rotateIBlock();
+                break;
+        }
+    }
+
+    function rotateIBlock() {
+        let orientation = activeArr[0].state.orientation;
+        const step = orientation == "horizontal"? BLOCK_SIZE : -BLOCK_SIZE;
+
+        activeArr[0].x += step;
+        activeArr[0].y += step;
+        orientation = step > 0 ? "vertical" : "horizontal";
+        for (let i=1; i<activeArr.length; i++) {
+            if (step > 0) {
+                activeArr[i].x = activeArr[0].x;
+                activeArr[i].y = activeArr[0].y - i*BLOCK_SIZE;
+                activeArr[i].state.orientation = "vertical";
+            } else {
+                activeArr[i].y = activeArr[0].y;
+                activeArr[i].x = activeArr[0].x + i*BLOCK_SIZE;
+                activeArr[i].state.orientation = "horizontal";
+            }
+        }
+        // Check gamescreen limits and collisions
+        const exceedsRight = activeArr.some(block => block.x+BLOCK_SIZE > GAME_WIDTH);
+        const exceedsLeft = activeArr.some(block => block.x < 0);
+        const exceedsBottom = activeArr.some(block => block.y+BLOCK_SIZE > GAME_HEIGHT);
+        if (detectCollision() || exceedsLeft || exceedsRight || exceedsBottom) {
+            rotateIBlock();
+        }
+    }
 
     function gameLoop() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
-        drawActiveBlock();
-        drawPassiveBlock();
+        drawBlocks(activeArr);
+        drawBlocks(blockArr);
         requestAnimationFrame(gameLoop);
     }
 
@@ -176,16 +211,6 @@ function initNewGame() {
     
     // game
 
-    // blockArr.push(new Block(0,-BLOCK_SIZE));
-    // blockArr.push(new Block(BLOCK_SIZE,-BLOCK_SIZE));
-    // blockArr.push(new Block(2*BLOCK_SIZE,-BLOCK_SIZE));
-    // blockArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE));
-    // new I_Block;
-    // setTimeout(() => {
-    //     new I_Block;
-    // }, 21000);
-
-
     tetrisCanvas.addEventListener("click", () => {
         generateNewBlock();
         fallTimerID = setInterval(() => moveDown(), fallSpeed);
@@ -213,14 +238,27 @@ function initNewGame() {
     gameLoop();
 
     document.addEventListener("keyup", (event) => {
-        if (event.key == "ArrowRight") {
-            shiftRight();
+
+        switch (event.key) {
+            case "ArrowRight":
+                shiftRight();
+                break;
+            case "ArrowLeft":
+                shiftLeft();
+                break;
+            case "ArrowUp":
+                rotateBlock();
+                break;
         }
-    });
-    document.addEventListener("keyup", (event) => {
-        if (event.key == "ArrowLeft") {
-            shiftLeft();
-        }
+
+    //     if (event.key == "ArrowRight") {
+    //         shiftRight();
+    //     }
+    // });
+    // document.addEventListener("keyup", (event) => {
+    //     if (event.key == "ArrowLeft") {
+    //         shiftLeft();
+    //     }
     });
 
     // document.addEventListener("keydown", (event) => {
