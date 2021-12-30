@@ -8,7 +8,7 @@ Solved? | Description
   [ ]   | Can rotate on another block and then stops
   [ ]   | Stroke lines overlap (visual issue)
   [ ]   | Start speed should be normal speed (despite ArrowDown)
-  [ ]   | randomizeBlock should be changed to generate all pieces for two "bags"
+  [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
 
 */
 window.addEventListener("DOMContentLoaded", initNewGame);
@@ -26,11 +26,12 @@ function initNewGame() {
     const BLOCK_SIZE = GAME_WIDTH/10;
     const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
     let blockArr = [];
-    let activeArr = []
+    let activeArr = [];
+	let orderArr = [];
     let fallTimerID;
     // let gameTimerID;
     // let blockGenerated = false;
-    const normalSpeed = 1000;
+    const normalSpeed = 500;
     const softDrop = 25;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     let isArrowDown = false;
@@ -228,15 +229,20 @@ function initNewGame() {
             activeArr = [];
             // --> check if any layer is full
             detectFullLayer();
-            randomizeBlock();
+            selectBlock();
             // new O_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
         }
     }
 
-    function randomizeBlock() {
-		const BLOCK_TYPES = 7;
-        let number = Math.round(Math.random()*(BLOCK_TYPES-1)+1);
+    function selectBlock() {
+		let number = orderArr.shift();
+		let randomArr = generateRandomOrder();
+		console.log(orderArr.length);
+		if (orderArr.length < 9) {
+			orderArr = orderArr.concat(randomArr);
+		}
+		// console.log("af: "+orderArr.length);
 
         switch (number) {
             case 1:
@@ -262,6 +268,24 @@ function initNewGame() {
 				break;
         }
     }
+
+	// function randomizeBlock() {
+	// 	if (orderArr.length <= 9) {
+	// 		orderArr.concat(generateRandomOrder());
+	// 	}
+	// 	return orderArr.shift();
+	// }
+
+	function generateRandomOrder() {
+		let arr = [];
+		while (arr.length<7) {
+			let num = Math.round(Math.random()*6+1);
+			if (arr.indexOf(num) == -1) {
+				arr.push(num)
+			}
+		}
+		return arr;
+	}
 
     function detectFullLayer() {
         layerCounter.forEach(layer => {
@@ -309,7 +333,7 @@ function initNewGame() {
             }
         }
 
-        const exceedsTop = activeArr.some(block => block.y < 0);
+        const exceedsTop = activeArr.some(block => block.y == -BLOCK_SIZE);
         if (isCollision && exceedsTop) {
             gameOver();
         }
@@ -441,6 +465,7 @@ function initNewGame() {
     // game
 
     tetrisCanvas.addEventListener("click", () => {
+		orderArr = generateRandomOrder().concat(generateRandomOrder());
         generateNewBlock();
         fallTimerID = setInterval(() => moveDown(), fallSpeed);
     }, {once: true});
