@@ -2,8 +2,13 @@
 // https://tetris.fandom.com/wiki/Tetris_Guideline
 // https://www.colinfahey.com/tetris/tetris.html
 
+/* Bugs:
+Solved? | Description
+----------------------------------------------
+  [ ]   | Can rotate on another block and then stops
+  [ ]   | Stroke lines overlap (visual issue)
 
-
+*/
 window.addEventListener("DOMContentLoaded", initNewGame);
 
 function initNewGame() {
@@ -78,6 +83,21 @@ function initNewGame() {
         }
     }
 
+    class S_Block {
+        constructor () {
+            this.state = {
+                color: "green",
+                stroke: "darkgreen",
+                type: "S",
+                orientation: "horizontal"
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+        }
+    }
+
     // functions
 
     function drawBlocks(array) {
@@ -146,8 +166,24 @@ function initNewGame() {
             activeArr = [];
             // --> check if any layer is full
             detectFullLayer();
-            new O_Block();
+            randomizeBlock();
+            // new O_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
+        }
+    }
+
+    function randomizeBlock() {
+        let number = Math.round(Math.random()*2+1);
+
+        switch (number) {
+            case 1:
+                new I_Block;
+                break;
+            case 2:
+                new O_Block;
+                break;
+            case 3:
+                new S_Block;
         }
     }
 
@@ -190,7 +226,7 @@ function initNewGame() {
                 if (!isCollision &&
                     active.x < passive.x + BLOCK_SIZE &&
                     active.x + BLOCK_SIZE > passive.x &&
-                    active.y <= passive.y + BLOCK_SIZE &&
+                    active.y < passive.y + BLOCK_SIZE &&
                     active.y + BLOCK_SIZE >= passive.y) {
                         isCollision = true;
                     }
@@ -211,14 +247,22 @@ function initNewGame() {
                 case "I":
                     rotateIBlock();
                     break;
+                case "S":
+                    rotateSZBlock();
+                    break;
             }
         }
     }
 
-    function gameOver() {
-        console.log("Game Over");
-        isGameOver = true;
-        clearInterval(fallTimerID);
+    function rotateSZBlock() {
+        let orientation = activeArr[0].state.orientation;
+        const direction = orientation=="horizontal"?2*BLOCK_SIZE:-2*BLOCK_SIZE;
+          
+		activeArr[2].x = activeArr[2].x+direction;
+		activeArr[3].y = activeArr[3].y-direction;
+		activeArr[0].state.orientation = orientation == "horizontal" ? "vertical" : "horizontal";
+        
+		checkRotation(rotateSZBlock);
     }
 
     function rotateIBlock() {
@@ -239,13 +283,25 @@ function initNewGame() {
                 activeArr[i].state.orientation = "horizontal";
             }
         }
-        // Check gamescreen limits and collisions
+        checkRotation(rotateIBlock);
+    }
+
+    function checkRotation(callback) {
         const exceedsRight = activeArr.some(block => block.x+BLOCK_SIZE > GAME_WIDTH);
         const exceedsLeft = activeArr.some(block => block.x < 0);
         const exceedsBottom = activeArr.some(block => block.y+BLOCK_SIZE > GAME_HEIGHT);
         if (detectCollision() || exceedsLeft || exceedsRight || exceedsBottom) {
-            rotateIBlock();
+            // if (detectCollision()) {
+            //     activeArr.forEach(block => block.y -= BLOCK_SIZE);
+            // }
+            callback();
         }
+    }
+    
+    function gameOver() {
+        console.log("Game Over");
+        isGameOver = true;
+        clearInterval(fallTimerID);
     }
 
     function gameLoop() {
