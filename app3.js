@@ -16,6 +16,7 @@ function initNewGame() {
     tetrisCanvas.width = GAME_WIDTH;
     const ctx = tetrisCanvas.getContext("2d");
     const BLOCK_SIZE = GAME_WIDTH/10;
+    const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
     let blockArr = [];
     let activeArr = []
     let fallTimerID;
@@ -26,6 +27,13 @@ function initNewGame() {
     let fallSpeed = rapidSpeed;   //time interval (ms) between downward block steps
     // let isArrowDown = false;
     let isGameOver = false;
+    let layerCounter = [];
+
+    for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
+        layerCounter.push([i*BLOCK_SIZE, 0]);
+        // [layer_height, block_count (initially 0)]
+    }
+
     // classes
 
     class Block {
@@ -74,13 +82,13 @@ function initNewGame() {
     }
     function shiftRight() {
         const isRight = activeArr.some(block => block.x+BLOCK_SIZE == GAME_WIDTH);
-        if (!isRight && !hasObstacle("right")) {
+        if (!isGameOver && !isRight && !hasObstacle("right")) {
             activeArr.forEach(block => block.x += BLOCK_SIZE);
         }
     }
     function shiftLeft() {
         const isLeft = activeArr.some(block => block.x == 0);
-        if (!isLeft && !hasObstacle("left")) {
+        if (!isGameOver && !isLeft && !hasObstacle("left")) {
             activeArr.forEach(block => block.x -= BLOCK_SIZE);
             
         }
@@ -113,8 +121,39 @@ function initNewGame() {
         if (!isGameOver) {
             activeArr.forEach(block => blockArr.push(block));
             activeArr = [];
+            // --> check if any layer is full
+            detectFullLayer();
             new I_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
+        }
+    }
+
+    function detectFullLayer() {
+        layerCounter.forEach(layer => {
+            let blockCount = blockArr.filter(block => block.y == layer[0]);
+            layer[1] = blockCount.length;
+            if (blockCount.length == 10) {
+                deleteFullLayer(layer[0]);
+            }
+        });
+    }
+
+    function deleteFullLayer(height) {
+        for (let i=0; i<blockArr.length; i++) {
+            if (blockArr[i].y == height) {
+                blockArr.splice(i,1);
+                i--;
+            }
+        }
+
+        fallBlocksAboveDeletedLayer(height);
+    }
+
+    function fallBlocksAboveDeletedLayer(height) {
+        for (let i=0; i<blockArr.length; i++) {
+            if (blockArr[i].y < height) {
+                blockArr[i].y += BLOCK_SIZE;
+            }
         }
     }
 
@@ -144,10 +183,12 @@ function initNewGame() {
 
     function rotateBlock() {
 
-        switch (activeArr[0].state.type) {
-            case "I":
-                rotateIBlock();
-                break;
+        if (!isGameOver) {
+            switch (activeArr[0].state.type) {
+                case "I":
+                    rotateIBlock();
+                    break;
+            }
         }
     }
 
