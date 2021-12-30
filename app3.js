@@ -7,6 +7,8 @@ Solved? | Description
 ----------------------------------------------
   [ ]   | Can rotate on another block and then stops
   [ ]   | Stroke lines overlap (visual issue)
+  [ ]   | Start speed should be normal speed (despite ArrowDown)
+  [ ]   | randomizeBlock should be changed to generate all pieces for two "bags"
 
 */
 window.addEventListener("DOMContentLoaded", initNewGame);
@@ -28,7 +30,7 @@ function initNewGame() {
     let fallTimerID;
     // let gameTimerID;
     // let blockGenerated = false;
-    const normalSpeed = 500;
+    const normalSpeed = 1000;
     const softDrop = 25;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     let isArrowDown = false;
@@ -55,7 +57,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "cyan",
-                stroke: "blue",
+                stroke: "#008b8b",
                 type: "I",
                 orientation: "horizontal"
             }
@@ -72,7 +74,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "yellow",
-                stroke: "orange",
+                stroke: "#8B8000",
                 type: "O",
                 orientation: ""
             }           
@@ -109,6 +111,36 @@ function initNewGame() {
             activeArr.push(new Block(4*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
             activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
             activeArr.push(new Block(3*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+        }
+    }
+
+    class L_Block {
+        constructor () {
+            this.state = {
+                color: "orange",
+                stroke: "darkorange",
+                type: "L",
+                orientation: 0
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+        }
+    }
+
+    class J_Block {
+        constructor () {
+            this.state = {
+                color: "blue",
+                stroke: "darkblue",
+                type: "J",
+                orientation: 0
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
             activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
         }
     }
@@ -188,7 +220,7 @@ function initNewGame() {
     }
 
     function randomizeBlock() {
-		const BLOCK_TYPES = 4;
+		const BLOCK_TYPES = 6;
         let number = Math.round(Math.random()*(BLOCK_TYPES-1)+1);
 
         switch (number) {
@@ -203,6 +235,12 @@ function initNewGame() {
 				break;
             case 4:
                 new Z_Block;
+				break;
+            case 5:
+                new L_Block;
+				break;
+            case 6:
+                new J_Block;
 				break;
         }
     }
@@ -273,9 +311,38 @@ function initNewGame() {
                 case "Z":
                     rotateSZBlock();
                     break;
+                case "J":
+                    rotateJLBlock();
+                    break;
+                case "L":
+                    rotateJLBlock();
+                    break;
             }
         }
     }
+
+	function rotateJLBlock() {
+		let orient = activeArr[0].state.orientation;
+		const type = activeArr[0].state.type;
+		// console.log(orient);
+		const axisL = orient % 2 == 0 ? "x" : "y";
+		const axisJ = orient % 2 == 1 ? "x" : "y";
+		const axis = type == "L" ? axisL : axisJ;
+		const dir1 = orient==0 || orient==3 ? -BLOCK_SIZE : BLOCK_SIZE;
+		const dir2 = orient==0 || orient==1 ? BLOCK_SIZE : -BLOCK_SIZE;
+		const dir = type == "L" ? dir1 : dir2;
+		
+		activeArr[1][axis] += 2*dir;
+
+		activeArr[2].x += dir2;
+		activeArr[2].y += -dir1;
+
+		activeArr[3].x += -dir2;
+		activeArr[3].y += dir1;
+
+		activeArr[0].state.orientation = orient == 3? 0 : ++orient;
+		// console.log(activeArr[0].state.orientation);
+	}
 
     function rotateSZBlock() {
         let orientation = activeArr[0].state.orientation;
