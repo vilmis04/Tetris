@@ -23,9 +23,9 @@ function initNewGame() {
     // let gameTimerID;
     // let blockGenerated = false;
     const normalSpeed = 1000;
-    const rapidSpeed = 100;
-    let fallSpeed = rapidSpeed;   //time interval (ms) between downward block steps
-    // let isArrowDown = false;
+    const rapidSpeed = 50;
+    let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
+    let isArrowDown = false;
     let isGameOver = false;
     let layerCounter = [];
 
@@ -232,60 +232,18 @@ function initNewGame() {
         requestAnimationFrame(gameLoop);
     }
 
-    // function changeSpeed () {
-    //     fallSpeed = fallSpeed == normalSpeed ? rapidSpeed : normalSpeed;
-    //     clearInterval(fallTimerID);
-    //     fallTimerID = setInterval(() => {
-    //         console.log(fallSpeed);
-    //         moveDown();
-    //     }, fallSpeed);
-    // }
-
-    // function rapidKeyDown(event) {
-    //     if (event.key == "ArrowDown") {
-    //         console.log("arrow key - down");
-    //         changeSpeed();
-    //         document.addEventListener("keyup", (e) => {
-    //             rapidKeyUp(e);
-    //         });
-    //     }
-    // }
-    // function rapidKeyUp(event) {
-    //     if (event.key == "ArrowDown") {
-    //         console.log("arrow key - up");
-    //         changeSpeed();
-    //         document.addEventListener("keydown", (e) => {
-    //             rapidKeyDown(e);
-    //         });
-    //     }
-    // }
-
-    
+    function changeSpeed () {
+        fallSpeed = fallSpeed == normalSpeed ? rapidSpeed : normalSpeed;
+        clearInterval(fallTimerID);
+        fallTimerID = setInterval(() => moveDown(), fallSpeed);
+    }
+   
     // game
 
     tetrisCanvas.addEventListener("click", () => {
         generateNewBlock();
         fallTimerID = setInterval(() => moveDown(), fallSpeed);
-
     }, {once: true});
-    // tetrisCanvas.addEventListener("click", () => {
-    //     generateNewBlock();
-    //     fallTimerID = setInterval(() => {
-    //         // console.log(fallSpeed);
-    //         if (!detectCollision()) {
-    //             console.log("not moved");
-    //             moveDown();
-    //             alert("moved");
-    //         } else {
-    //             console.log("Collision!");
-    //             generateNewBlock();
-    //         }
-    //         // moveDown();
-    //     }, fallSpeed);
-
-    // }, {once: true});
-
-    // fallTimerID = setInterval(() => moveDown(), fallSpeed);
 
     gameLoop();
 
@@ -301,32 +259,24 @@ function initNewGame() {
             case "ArrowUp":
                 rotateBlock();
                 break;
+            case "ArrowDown":
+                // console.log("Slow down!");
+                changeSpeed();
+                isArrowDown = false;
+                break;
         }
-
-    //     if (event.key == "ArrowRight") {
-    //         shiftRight();
-    //     }
-    // });
-    // document.addEventListener("keyup", (event) => {
-    //     if (event.key == "ArrowLeft") {
-    //         shiftLeft();
-    //     }
     });
 
-    // document.addEventListener("keydown", (event) => {
-    //     console.log("arrow key - down - FIRST");
-    //     rapidKeyDown(event);
-    // });
+    document.addEventListener("keydown", (event) => {
 
-    // document.addEventListener("keydown", (event) => {
-    //     // alert("keydown: "+event.key);
-    //     if (event.key == "ArrowDown") {
-    //         changeSpeed();
-    //         document.addEventListener("keyup", (event) => {
-    //             // alert("keydown: "+event.key);
-    //             if (event.key == "ArrowDown") {
-    //             changeSpeed();
-            
-    //     }
-    // }, {once:true});
+        switch (event.key) {
+            case "ArrowDown":
+                if (!isArrowDown) {
+                    // console.log("Speed up!");
+                    changeSpeed();
+                    isArrowDown = true;
+                }
+                break;
+        }
+    });
 }
