@@ -98,6 +98,21 @@ function initNewGame() {
         }
     }
 
+    class Z_Block {
+        constructor () {
+            this.state = {
+                color: "red",
+                stroke: "darkred",
+                type: "Z",
+                orientation: "horizontal"
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+        }
+    }
+
     // functions
 
     function drawBlocks(array) {
@@ -173,7 +188,8 @@ function initNewGame() {
     }
 
     function randomizeBlock() {
-        let number = Math.round(Math.random()*2+1);
+		const BLOCK_TYPES = 4;
+        let number = Math.round(Math.random()*(BLOCK_TYPES-1)+1);
 
         switch (number) {
             case 1:
@@ -184,6 +200,10 @@ function initNewGame() {
                 break;
             case 3:
                 new S_Block;
+				break;
+            case 4:
+                new Z_Block;
+				break;
         }
     }
 
@@ -248,6 +268,9 @@ function initNewGame() {
                     rotateIBlock();
                     break;
                 case "S":
+                    rotateSZBlock();
+                    break;
+                case "Z":
                     rotateSZBlock();
                     break;
             }
