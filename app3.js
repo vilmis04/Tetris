@@ -145,6 +145,21 @@ function initNewGame() {
         }
     }
 
+    class T_Block {
+        constructor () {
+            this.state = {
+                color: "purple",
+                stroke: "darkmagenta",
+                type: "T",
+                orientation: 0
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(4*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+        }
+    }
+
     // functions
 
     function drawBlocks(array) {
@@ -220,7 +235,7 @@ function initNewGame() {
     }
 
     function randomizeBlock() {
-		const BLOCK_TYPES = 6;
+		const BLOCK_TYPES = 7;
         let number = Math.round(Math.random()*(BLOCK_TYPES-1)+1);
 
         switch (number) {
@@ -241,6 +256,9 @@ function initNewGame() {
 				break;
             case 6:
                 new J_Block;
+				break;
+            case 7:
+                new T_Block;
 				break;
         }
     }
@@ -312,27 +330,39 @@ function initNewGame() {
                     rotateSZBlock();
                     break;
                 case "J":
-                    rotateJLBlock();
+                    rotateJLTBlock();
                     break;
                 case "L":
-                    rotateJLBlock();
+                    rotateJLTBlock();
+                    break;
+                case "T":
+                    rotateJLTBlock();
                     break;
             }
         }
     }
 
-	function rotateJLBlock() {
+	function rotateJLTBlock() {
 		let orient = activeArr[0].state.orientation;
 		const type = activeArr[0].state.type;
-		// console.log(orient);
-		const axisL = orient % 2 == 0 ? "x" : "y";
-		const axisJ = orient % 2 == 1 ? "x" : "y";
-		const axis = type == "L" ? axisL : axisJ;
 		const dir1 = orient==0 || orient==3 ? -BLOCK_SIZE : BLOCK_SIZE;
 		const dir2 = orient==0 || orient==1 ? BLOCK_SIZE : -BLOCK_SIZE;
-		const dir = type == "L" ? dir1 : dir2;
+		let axis = "";
 		
-		activeArr[1][axis] += 2*dir;
+		switch (type) {
+			case "L":
+				axis = orient % 2 == 0 ? "x" : "y";
+				activeArr[1][axis] += 2*dir1;
+				break;
+			case "J":
+				axis = orient % 2 == 1 ? "x" : "y";
+				activeArr[1][axis] += 2*dir2;
+				break;
+			case "T":
+				activeArr[1].x += dir1;
+				activeArr[1].y += dir2;
+				break;
+		}
 
 		activeArr[2].x += dir2;
 		activeArr[2].y += -dir1;
@@ -341,7 +371,8 @@ function initNewGame() {
 		activeArr[3].y += dir1;
 
 		activeArr[0].state.orientation = orient == 3? 0 : ++orient;
-		// console.log(activeArr[0].state.orientation);
+
+		checkRotation(rotateJLTBlock);
 	}
 
     function rotateSZBlock() {
