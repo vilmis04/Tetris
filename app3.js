@@ -1,5 +1,6 @@
 // Tetris rules
 // https://tetris.fandom.com/wiki/Tetris_Guideline
+// https://www.colinfahey.com/tetris/tetris.html
 
 
 
@@ -22,8 +23,8 @@ function initNewGame() {
     let fallTimerID;
     // let gameTimerID;
     // let blockGenerated = false;
-    const normalSpeed = 1000;
-    const rapidSpeed = 50;
+    const normalSpeed = 500;
+    const softDrop = 25;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     let isArrowDown = false;
     let isGameOver = false;
@@ -59,6 +60,21 @@ function initNewGame() {
                 // activeArr.push(new Block(xPos,-BLOCK_SIZE,this.color));
                 activeArr.push(new Block(xPos,-BLOCK_SIZE,this.state));
             }
+        }
+    }
+
+    class O_Block {
+        constructor () {
+            this.state = {
+                color: "yellow",
+                stroke: "orange",
+                type: "O",
+                orientation: ""
+            }           
+            activeArr.push(new Block(4*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-2*BLOCK_SIZE,this.state));
+            activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
         }
     }
 
@@ -130,7 +146,7 @@ function initNewGame() {
             activeArr = [];
             // --> check if any layer is full
             detectFullLayer();
-            new I_Block();
+            new O_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
         }
     }
@@ -240,7 +256,7 @@ function initNewGame() {
     }
 
     function changeSpeed () {
-        fallSpeed = fallSpeed == normalSpeed ? rapidSpeed : normalSpeed;
+        fallSpeed = fallSpeed == normalSpeed ? softDrop : normalSpeed;
         clearInterval(fallTimerID);
         fallTimerID = setInterval(() => moveDown(), fallSpeed);
     }
