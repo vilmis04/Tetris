@@ -49,6 +49,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "cyan",
+                stroke: "blue",
                 type: "I",
                 orientation: "horizontal"
             }
@@ -66,7 +67,13 @@ function initNewGame() {
     function drawBlocks(array) {
         array.forEach(block => {
             ctx.fillStyle = block.state.color;
-            ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.strokeStyle = block.state.stroke;
+            ctx.beginPath();
+            // ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.rect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
+            ctx.fill();
+            ctx.stroke();
+
         });        
     }
     function moveDown () {
