@@ -58,7 +58,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "cyan",
-                stroke: "#008b8b",
+                stroke: "hsl(180, 10%, 10%)",
                 type: "I",
                 orientation: "horizontal"
             }
@@ -75,7 +75,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "yellow",
-                stroke: "#8B8000",
+                stroke: "hsl(60, 10%, 10%)",
                 type: "O",
                 orientation: ""
             }           
@@ -90,7 +90,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "green",
-                stroke: "darkgreen",
+                stroke: "hsl(120, 10%, 10%)",
                 type: "S",
                 orientation: "horizontal"
             }           
@@ -105,7 +105,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "red",
-                stroke: "darkred",
+                stroke: "hsl(0, 10%, 10%)",
                 type: "Z",
                 orientation: "horizontal"
             }           
@@ -120,7 +120,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "orange",
-                stroke: "darkorange",
+                stroke: "hsl(39, 10%, 10%)",
                 type: "L",
                 orientation: 0
             }           
@@ -135,7 +135,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "blue",
-                stroke: "darkblue",
+                stroke: "hsl(240, 10%, 10%)",
                 type: "J",
                 orientation: 0
             }           
@@ -150,7 +150,7 @@ function initNewGame() {
         constructor () {
             this.state = {
                 color: "purple",
-                stroke: "darkmagenta",
+                stroke: "hsl(300, 10%, 10%)",
                 type: "T",
                 orientation: 0
             }           
@@ -167,10 +167,11 @@ function initNewGame() {
         array.forEach(block => {
             ctx.fillStyle = block.state.color;
             ctx.strokeStyle = block.state.stroke;
+            ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
             ctx.beginPath();
             // ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
-            ctx.rect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
-            ctx.fill();
+            ctx.rect(block.x+1, block.y+1, BLOCK_SIZE-2, BLOCK_SIZE-2);
+            // ctx.fill();
             ctx.stroke();
 
         });        
@@ -239,7 +240,7 @@ function initNewGame() {
     function selectBlock() {
 		let number = orderArr.shift();
 		let randomArr = generateRandomOrder();
-		console.log(orderArr.length);
+		// console.log(orderArr.length);
 		if (orderArr.length < 9) {
 			orderArr = orderArr.concat(randomArr);
 		}
