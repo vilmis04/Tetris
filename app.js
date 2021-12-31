@@ -512,6 +512,19 @@ function initNewGame() {
         },3000);
 
     }
+
+    function pause() {
+        if (playBtn.textContent == "PAUSE") {
+            clearInterval(fallTimerID);
+            playBtn.textContent = "PLAY";
+        } else {
+            startCountdown();
+            setTimeout(() => {
+                changeSpeed(normalSpeed);
+            }, 3000);
+            playBtn.textContent = "PLAY";          
+        }
+    }
    
     // game
 
@@ -525,7 +538,8 @@ function initNewGame() {
             generateNewBlock();
             changeSpeed(normalSpeed);
         }, 3000);
-
+        playBtn.textContent = "PAUSE";
+        playBtn.addEventListener("click", pause);
 		
     }, {once: true});
 
