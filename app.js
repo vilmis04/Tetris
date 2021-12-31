@@ -6,7 +6,7 @@
 Solved? | Description
 ----------------------------------------------
   [ ]   | Can rotate on another block and then stops
-  [ ]   | Stroke lines overlap (visual issue)
+  [x]   | Stroke lines overlap (visual issue)
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
 
@@ -33,8 +33,10 @@ function initNewGame() {
     // let blockGenerated = false;
     const normalSpeed = 500;
     const softDrop = 25;
+    const hardDrop = 1;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     let isArrowDown = false;
+    let ishardDrop = false;
     let isGameOver = false;
     let layerCounter = [];
 
@@ -491,6 +493,9 @@ function initNewGame() {
                 changeSpeed(normalSpeed);
                 isArrowDown = false;
                 break;
+            case " ":
+                changeSpeed(hardDrop);
+                // ishardDrop = false;
         }
     });
 
