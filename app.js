@@ -7,7 +7,7 @@ Solved? | Description
 ----------------------------------------------
   [ ]   | Can rotate on another block and then stops
   [ ]   | Stroke lines overlap (visual issue)
-  [ ]   | Start speed should be normal speed (despite ArrowDown)
+  [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
 
 */
@@ -229,6 +229,7 @@ function initNewGame() {
             activeArr = [];
             // --> check if any layer is full
             detectFullLayer();
+            changeSpeed(normalSpeed);
             selectBlock();
             // new O_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
@@ -456,10 +457,10 @@ function initNewGame() {
         requestAnimationFrame(gameLoop);
     }
 
-    function changeSpeed () {
-        fallSpeed = fallSpeed == normalSpeed ? softDrop : normalSpeed;
+    function changeSpeed (speed) {
+        // fallSpeed = fallSpeed == normalSpeed ? softDrop : normalSpeed;
         clearInterval(fallTimerID);
-        fallTimerID = setInterval(() => moveDown(), fallSpeed);
+        fallTimerID = setInterval(() => moveDown(), speed);
     }
    
     // game
@@ -467,7 +468,7 @@ function initNewGame() {
     tetrisCanvas.addEventListener("click", () => {
 		orderArr = generateRandomOrder().concat(generateRandomOrder());
         generateNewBlock();
-        fallTimerID = setInterval(() => moveDown(), fallSpeed);
+        changeSpeed(normalSpeed);
     }, {once: true});
 
     gameLoop();
@@ -486,7 +487,7 @@ function initNewGame() {
                 break;
             case "ArrowDown":
                 // console.log("Slow down!");
-                changeSpeed();
+                changeSpeed(normalSpeed);
                 isArrowDown = false;
                 break;
         }
@@ -498,7 +499,7 @@ function initNewGame() {
             case "ArrowDown":
                 if (!isArrowDown) {
                     // console.log("Speed up!");
-                    changeSpeed();
+                    changeSpeed(softDrop);
                     isArrowDown = true;
                 }
                 break;
