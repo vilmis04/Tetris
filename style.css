@@ -75,13 +75,28 @@ body {
     cursor: pointer;
 }
 
-.btn:hover {
+.play-pause-btn {
+    background-color: lightgreen;
+}
+.play-pause-btn:hover {
+    background-color: green;
     color: white;
-    background-color: crimson;
+}
+
+.reset-btn {
+    background-color: red;
+}
+.reset-btn:hover {
+    background-color: darkred;
+    color: white;
 }
 
 .leaderboard-btn {
     grid-column: 1/3;
+}
+.leaderboard-btn:hover {
+    background-color: orange;
+    color: white;
 }
 
 .next-canvas {

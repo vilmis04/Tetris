@@ -21,11 +21,12 @@ Done? | Description
   [ ]   | Local storage of highscores
   [ ]   | LeaderBoard
   [x]   | Play button
-  [ ]   | Pause button
+  [x]   | Pause button
   [x]   | Reset button
   [x]   | Countdown before start
   [ ]   | Countdown after pause
   [ ]   | Mobile controls
+  [x]   | Game Over screen
 
 
 */
@@ -39,6 +40,7 @@ function initNewGame() {
     const playBtn = document.querySelector("#play-btn");
     const resetBtn = document.querySelector("#reset-btn");
     const ldrbrdBtn = document.querySelector("#ldrbrd-btn");
+    const gameOverText = document.createElement("div");
     const GAME_HEIGHT = 480;
     const GAME_WIDTH = 240;
     tetrisCanvas.height = GAME_HEIGHT;
@@ -472,6 +474,25 @@ function initNewGame() {
         console.log("Game Over");
         isGameOver = true;
         clearInterval(fallTimerID);
+
+        const textGame = document.createElement("div");
+        const textOver = document.createElement("div");
+        textGame.textContent = "Game";
+        textOver.textContent = "Over";
+        gameOverText.style.display = "flex";
+        gameOverText.style.flexDirection = "column";
+        gameOverText.style.padding = "1rem";
+        gameOverText.style.fontSize = "3rem";
+        gameOverText.style.fontWeight = "bold";
+        gameOverText.style.background = "white";
+        gameOverText.style.zIndex = "999";
+        gameOverText.style.position = "absolute";
+        gameOverText.style.left = "25%";
+        gameOverText.style.top = "40%";
+        gameOverText.append(textGame, textOver);
+        grid.append(gameOverText);
+
+        playBtn.removeEventListener("click", pause);
     }
 
     function gameLoop() {
@@ -525,28 +546,30 @@ function initNewGame() {
             playBtn.textContent = "PLAY";          
         }
     }
-   
-    // game
 
-    playBtn.addEventListener("click", () => {
+    function startGame() {
         startCountdown();
-        // orderArr = generateRandomOrder().concat(generateRandomOrder());
-        // generateNewBlock();
-        // changeSpeed(normalSpeed);
         setTimeout(() => {
             orderArr = generateRandomOrder().concat(generateRandomOrder());
             generateNewBlock();
             changeSpeed(normalSpeed);
         }, 3000);
-        playBtn.textContent = "PAUSE";
         playBtn.addEventListener("click", pause);
-		
-    }, {once: true});
+        playBtn.textContent = "PAUSE";
+    }
+   
+    // game
+
+    playBtn.addEventListener("click", startGame, {once: true});
 
     resetBtn.addEventListener("click", () => {
         clearInterval(fallTimerID);
         initNewGame();
         playBtn.textContent = "PLAY";
+        gameOverText.remove();
+        // startCountdown();
+        // startGame();
+        // playBtn.removeEventListener("click", startGame, {once: true});
     });
 
     gameLoop();
