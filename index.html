@@ -7,7 +7,7 @@
     <title>Tetris</title>
     <link rel="stylesheet" href="style.css">
     <script src="app.js"></script>
-\</head>
+</head>
 <body>
     
     <div id="grid">
@@ -15,15 +15,16 @@
         <div class="game-area">
             <canvas id="teris-canvas" class="tetris-canvas"></canvas>
             <div class="main-panel">
-                <div class="next-title"></div>
+                <div class="next-title">NEXT</div>
                 <canvas class="next-canvas"></canvas>
-                <div class="score-title"></div>
-                <div class="score-number"></div>
-                <div class="best-title"></div>
-                <div class="best-number"></div>
+                <div class="score-title">Score</div>
+                <div class="score-number">XXXX</div>
+                <div class="best-title">Highscore</div>
+                <div class="best-number">XXXX</div>
                 <div class="btn-panel">
-                    <div class="play-pause-btn"></div>
-                    <div class="reset-btn"></div>
+                    <div id="play-btn" class="play-pause-btn btn">PLAY</div>
+                    <div id="reset-btn" class="reset-btn btn">RESET</div>
+                    <div id="ldrbrd-btn" class="leaderboard-btn btn">HIGHSCORES</div>
                 </div>
             </div>
         </div>

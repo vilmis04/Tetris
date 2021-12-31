@@ -10,6 +10,24 @@ Solved? | Description
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
 
+
+  Roadmap:
+
+Done? | Description
+----------------------------------------------
+  [x]   | Main panel styling
+  [ ]   | Next block display
+  [ ]   | Scoring
+  [ ]   | Local storage of highscores
+  [ ]   | LeaderBoard
+  [x]   | Play button
+  [ ]   | Pause button
+  [x]   | Reset button
+  [x]   | Countdown before start
+  [ ]   | Countdown after pause
+  [ ]   | Mobile controls
+
+
 */
 window.addEventListener("DOMContentLoaded", initNewGame);
 
@@ -18,6 +36,9 @@ function initNewGame() {
     // definitions
 
     const tetrisCanvas = document.querySelector(".tetris-canvas");
+    const playBtn = document.querySelector("#play-btn");
+    const resetBtn = document.querySelector("#reset-btn");
+    const ldrbrdBtn = document.querySelector("#ldrbrd-btn");
     const GAME_HEIGHT = 480;
     const GAME_WIDTH = 240;
     tetrisCanvas.height = GAME_HEIGHT;
@@ -462,17 +483,57 @@ function initNewGame() {
 
     function changeSpeed (speed) {
         // fallSpeed = fallSpeed == normalSpeed ? softDrop : normalSpeed;
-        clearInterval(fallTimerID);
-        fallTimerID = setInterval(() => moveDown(), speed);
+        if (!isGameOver) {
+            clearInterval(fallTimerID);
+            fallTimerID = setInterval(() => moveDown(), speed);
+        }
+    }
+
+    function startCountdown() {
+        let remainingTime = 3;
+        const timer = document.createElement("div");
+        timer.style.fontSize = "3rem";
+        timer.style.color = "white";
+        timer.style.zIndex = "999";
+        timer.style.position = "absolute";
+        timer.style.left = "37.5%";
+        timer.style.top = "40%";
+        grid.append(timer);
+        
+        timer.textContent = remainingTime;
+        setTimeout(()=>{
+            timer.textContent = --remainingTime;
+        },1000);
+        setTimeout(()=>{
+            timer.textContent = --remainingTime;
+        },2000);
+        setTimeout(()=>{
+            timer.remove();
+        },3000);
+
     }
    
     // game
 
-    tetrisCanvas.addEventListener("click", () => {
-		orderArr = generateRandomOrder().concat(generateRandomOrder());
-        generateNewBlock();
-        changeSpeed(normalSpeed);
+    playBtn.addEventListener("click", () => {
+        startCountdown();
+        // orderArr = generateRandomOrder().concat(generateRandomOrder());
+        // generateNewBlock();
+        // changeSpeed(normalSpeed);
+        setTimeout(() => {
+            orderArr = generateRandomOrder().concat(generateRandomOrder());
+            generateNewBlock();
+            changeSpeed(normalSpeed);
+        }, 3000);
+
+		
     }, {once: true});
+
+    resetBtn.addEventListener("click", () => {
+        clearInterval(fallTimerID);
+        initNewGame();
+        playBtn.textContent = "PLAY";
+    });
 
     gameLoop();
 
