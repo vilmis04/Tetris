@@ -16,17 +16,17 @@ Solved? | Description
 Done? | Description
 ----------------------------------------------
   [x]   | Main panel styling
-  [ ]   | Next block display
-  [ ]   | Scoring
-  [ ]   | Local storage of highscores
-  [ ]   | LeaderBoard
   [x]   | Play button
   [x]   | Pause button
   [x]   | Reset button
   [x]   | Countdown before start
-  [ ]   | Countdown after pause
-  [ ]   | Mobile controls
+  [x]   | Countdown after pause
   [x]   | Game Over screen
+  [x]   | Next block display
+  [ ]   | Scoring
+  [ ]   | Local storage of highscores
+  [ ]   | LeaderBoard
+  [ ]   | Mobile controls
 
 
 */
@@ -37,6 +37,10 @@ function initNewGame() {
     // definitions
 
     const tetrisCanvas = document.querySelector(".tetris-canvas");
+    const nextCanvas = document.querySelector(".next-canvas");
+    const ntx = nextCanvas.getContext("2d");
+    nextCanvas.width = 120;
+    nextCanvas.height = 72;
     const playBtn = document.querySelector("#play-btn");
     const resetBtn = document.querySelector("#reset-btn");
     const ldrbrdBtn = document.querySelector("#ldrbrd-btn");
@@ -47,10 +51,12 @@ function initNewGame() {
     tetrisCanvas.width = GAME_WIDTH;
     const ctx = tetrisCanvas.getContext("2d");
     const BLOCK_SIZE = GAME_WIDTH/10;
-    const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
+    // const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
     let blockArr = [];
     let activeArr = [];
 	let orderArr = [];
+    let nextShape = [];
+
     let fallTimerID;
     // let gameTimerID;
     // let blockGenerated = false;
@@ -261,7 +267,7 @@ function initNewGame() {
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
         }
     }
-
+    
     function selectBlock() {
 		let number = orderArr.shift();
 		let randomArr = generateRandomOrder();
@@ -270,7 +276,32 @@ function initNewGame() {
 			orderArr = orderArr.concat(randomArr);
 		}
 		// console.log("af: "+orderArr.length);
+        shapeSelector(number);
+        shapeSelector(orderArr[0]);
+        nextShape = [];
+        nextShape = activeArr.splice(-4);
+        // console.log(nextShape[0].state.color+" "+nextShape[0].state.type);
+        ntx.clearRect(0,0,nextCanvas.width, nextCanvas.height);
+        drawNext(nextShape);
+        // console.log(nextShape);
+    }
 
+    function drawNext(array) {
+        array.forEach(block => {
+            // const c = 0.75;
+            const o = 2.5*BLOCK_SIZE;
+            ntx.fillStyle = block.state.color;
+            ntx.strokeStyle = block.state.stroke;
+            ntx.fillRect(block.x-o, block.y+o, BLOCK_SIZE, BLOCK_SIZE);
+            ntx.beginPath();
+            // ntx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
+            ntx.rect(block.x+1-o, block.y+1+o, BLOCK_SIZE-2, BLOCK_SIZE-2);
+            // ntx.fill();
+            ntx.stroke();
+        });
+    }
+
+    function shapeSelector(number) {
         switch (number) {
             case 1:
                 new I_Block;
