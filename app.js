@@ -26,12 +26,14 @@ Done? | Description
   [x]   | Game Over screen
   [x]   | Next block display
   [x]   | Leveling
-  [ ]   | Scoring
+  [x]   | Scoring (clearing lines only)
   [ ]   | Local storage of highscores
   [ ]   | LeaderBoard
   [ ]   | Mobile controls
   [ ]   | Button layout / gameflow
   [ ]   | move right on hold
+  [ ]   | Scoring for soft drop
+  [ ]   | Scoring for hard drop
 
 
 */
@@ -79,6 +81,12 @@ function initNewGame() {
     let ishardDrop = false;
     let isGameOver = false;
     let layerCounter = [];
+    let linesToClear = 10;
+    let score = 0;
+    let deleteCounter = 0;
+    const scoreOnScreen = document.querySelector(".score-number");
+    
+    scoreOnScreen.textContent = score;
 
     for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
         layerCounter.push([i*BLOCK_SIZE, 0]);
@@ -206,7 +214,7 @@ function initNewGame() {
     // functions
 
     function drawLevelGraphics() {
-        let endPoint = levelCount/10 * 2;
+        let endPoint = levelCount/linesToClear * 2;
         // let endPoint = 2;
 
         ltx.strokeStyle = "green";
@@ -297,11 +305,33 @@ function initNewGame() {
             activeArr = [];
             // --> check if any layer is full
             detectFullLayer();
+            updateScore();
             changeSpeed(normalSpeed);
             selectBlock();
             // new O_Block();
             // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
         }
+    }
+
+    function updateScore() {
+        if (deleteCounter) {
+            switch (deleteCounter) {
+                case 1:
+                    score += 40*level;
+                    break;
+                case 2:
+                    score += 100*level;
+                    break;
+                case 3:
+                    score += 300*level;
+                    break;
+                case 4:
+                    score += 1200*level;
+                    break;
+            }
+        }
+        deleteCounter = 0;
+        scoreOnScreen.textContent = score;
     }
     
     function selectBlock() {
@@ -387,9 +417,10 @@ function initNewGame() {
             layer[1] = blockCount.length;
             if (blockCount.length == 10) {
                 deleteFullLayer(layer[0]);
+                deleteCounter++;
                 levelCount++;
                 // console.log("Level count: "+levelCount);
-                if (levelCount == 10) {
+                if (levelCount == linesToClear) {
                     // level++;
                     level = level < 10 ? ++level : 10;
                     levelCount = 0;
