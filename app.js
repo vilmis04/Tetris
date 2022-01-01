@@ -11,8 +11,8 @@ Solved? | Description
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
   [x]   | text (game over/ start/ timer) positioning
   [x]   | Next block positioning in display box
-  [ ]   | reset button not reseting properly
-  [ ]   | pause/play not functioning properly
+  [x]   | reset button not reseting properly
+  [x]   | pause/play not functioning properly
 
 
   Roadmap:
@@ -29,8 +29,9 @@ Done? | Description
   [x]   | Next block display
   [x]   | Leveling
   [x]   | Scoring (clearing lines only)
-  [ ]   | Local storage of highscores (prompt for name entry)
-  [ ]   | LeaderBoard
+  [x]   | Local storage of highscores (prompt for name entry)
+  [x]   | LeaderBoard
+  [ ]   | LeaderBoard style updates
   [ ]   | Mobile controls
   [ ]   | Button layout / gameflow
   [ ]   | move right on hold
@@ -97,6 +98,8 @@ function initNewGame() {
     highscore = highscore ? highscore : 0;
     const onScreenLeadboard = document.createElement("div");
     const namePrompt = document.createElement("div");
+    let isLeaderboardOpen = false;
+    let isLeaderboardCreated = false;
 
     scoreOnScreen.textContent = score;
     highscoreOnScreen.textContent = highscore;
@@ -712,6 +715,24 @@ function initNewGame() {
     }
 
     function displayLeaderboard() {
+        if (isLeaderboardOpen) return;
+        isLeaderboardOpen = true;
+        if (!isLeaderboardCreated) {
+            generateLeaderboard();
+        }
+        // generateLeaderboard();
+
+
+        grid.append(onScreenLeadboard);
+        // closeBtn.addEventListener("click", ()=> {
+        //     onScreenLeadboard.remove();
+        //     isLeaderboardOpen = false;
+        // });
+
+    }
+
+    function generateLeaderboard() {
+        isLeaderboardCreated = true;
         let counter = 0;
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
@@ -735,15 +756,19 @@ function initNewGame() {
             onScreenLeadboard.append(pos,name,playerscore);
         });
         onScreenLeadboard.append(closeBtn);
-        grid.append(onScreenLeadboard);
         closeBtn.addEventListener("click", ()=> {
             onScreenLeadboard.remove();
+            isLeaderboardOpen = false;
+            isLeaderboardCreated = false;
+            while (onScreenLeadboard.firstChild) {
+                onScreenLeadboard.firstChild.remove();
+            }
         });
-
     }
 
-
     function displayGameOver() {
+
+
         const textGame = document.createElement("div");
         const textOver = document.createElement("div");
         const textPlayAgain = document.createElement("div");

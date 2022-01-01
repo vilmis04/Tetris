@@ -145,6 +145,7 @@ body {
   position: absolute;
   z-index: 1000;
   gap: 1rem;
+  border: 1px solid black;
 }
 
 .leaderboard-title {
