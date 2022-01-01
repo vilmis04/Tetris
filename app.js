@@ -657,22 +657,30 @@ function initNewGame() {
     function updateLeaderboard() {
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
-        leaderboard = leaderboard==null? [] : leaderboard;
-        const lowestScore = leaderboard.reduce((acc, val) => {
-            acc = acc<val? acc : val;
-            return acc;
-        },0);
-        if (score>lowestScore) {
+        if (leaderboard == null) {
+            leaderboard = [];
+            storage.setItem("TetrisLeaderboard",JSON.stringify(leaderboard));
+        }
+        if (leaderboard.length > 5) {
+            const lowestScore = leaderboard.reduce((acc, val) => {
+                acc = acc<val? acc : val;
+                return acc;
+            },0);
+            if (score>lowestScore) {
+                showInputField();
+            }
+        } else {
             showInputField();
         }
+
     }
 
     function addToLeaderboard(name) {
         let leaderboard = JSON.parse(storage.getItem("TetrisLeaderboard"));
-        const newEntry = [name, highscore];
+        const newEntry = [name, score];
         leaderboard.push(newEntry);
         leaderboard.sort((a, b)=> b[1] - a[1]);
-        if (leaderboard.length > 20) {
+        if (leaderboard.length > 5) {
             leaderboard.pop();
         }
         storage.setItem("TetrisLeaderboard", JSON.stringify(leaderboard));
@@ -680,11 +688,8 @@ function initNewGame() {
     }
 
     // function promptForName(name) {
-         
     //     // while (playerName == "") {
-
     //     // }
-
     //     return name;
     // }
 
@@ -695,11 +700,9 @@ function initNewGame() {
         inputField.setAttribute("type", "text");
         inputField.setAttribute("placeholder", "Type your name here...");
         const button = document.createElement("button");
-        button.textContent = "SUBMIT";
+        button.textContent = "ENTER";
         namePrompt.append(title, inputField, button);
-        namePrompt.style.position = "absolute";
-        namePrompt.style.zIndex = "1000";
-        namePrompt.style.background = "white";
+        namePrompt.classList.add("highscore-input");
         grid.append(namePrompt);
         button.addEventListener("click", ()=> {
             const name = inputField.value;
@@ -709,9 +712,33 @@ function initNewGame() {
     }
 
     function displayLeaderboard() {
+        let counter = 0;
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
-        console.log(leaderboard);
+        // console.log(leaderboard);
+        const leaderboardTitle = document.createElement("div");
+        leaderboardTitle.classList.add("leaderboard-title");
+        leaderboardTitle.textContent = "LEADERBOARD";
+        const closeBtn = document.createElement("button");
+        closeBtn.classList.add("close-btn");
+        closeBtn.textContent = "CLOSE";
+
+        onScreenLeadboard.classList.add("onScreenLeaderboard");
+        onScreenLeadboard.append(leaderboardTitle);
+        leaderboard.forEach(entry => {
+            let pos = document.createElement("div");
+            pos.textContent = ++counter;
+            let name = document.createElement("div");
+            name.textContent = entry[0];
+            let playerscore = document.createElement("div");
+            playerscore.textContent = entry[1];
+            onScreenLeadboard.append(pos,name,playerscore);
+        });
+        onScreenLeadboard.append(closeBtn);
+        grid.append(onScreenLeadboard);
+        closeBtn.addEventListener("click", ()=> {
+            onScreenLeadboard.remove();
+        });
 
     }
 
@@ -800,6 +827,7 @@ function initNewGame() {
     // game
 
     playBtn.addEventListener("click", startGame, {once: true});
+    ldrbrdBtn.addEventListener("click", displayLeaderboard);
 
     resetBtn.addEventListener("click", () => {
         clearInterval(fallTimerID);
