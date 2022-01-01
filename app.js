@@ -90,9 +90,16 @@ function initNewGame() {
     let score = 0;
     let deleteCounter = 0;
     const scoreOnScreen = document.querySelector(".score-number");
-    let rotationAllowed = false;
+    const highscoreOnScreen = document.querySelector(".best-number");
+    // let rotationAllowed = false;
+    const storage = window.localStorage;
+    let highscore = storage.getItem("TetrisHighscore");
+    highscore = highscore ? highscore : 0;
+    const onScreenLeadboard = document.createElement("div");
+    const namePrompt = document.createElement("div");
 
     scoreOnScreen.textContent = score;
+    highscoreOnScreen.textContent = highscore;
 
     for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
         layerCounter.push([i*BLOCK_SIZE, 0]);
@@ -626,24 +633,103 @@ function initNewGame() {
         isGameOver = true;
         clearInterval(fallTimerID);
 
+        displayGameOver();
+
+        updateHighScore();
+
+        gameOverText.addEventListener("click", ()=>{
+            gameOverText.remove();
+            playBtn.textContent = "PLAY";
+            initNewGame();
+        });
+        playBtn.removeEventListener("click", pause);
+    }
+
+    function updateHighScore() {
+        if (highscore < score) {
+            highscore = score;
+            highscoreOnScreen.textContent = highscore;
+            storage.setItem("TetrisHighscore", highscore);
+        }
+        updateLeaderboard();
+    }
+
+    function updateLeaderboard() {
+        let leaderboard = storage.getItem("TetrisLeaderboard");
+        leaderboard = JSON.parse(leaderboard);
+        leaderboard = leaderboard==null? [] : leaderboard;
+        const lowestScore = leaderboard.reduce((acc, val) => {
+            acc = acc<val? acc : val;
+            return acc;
+        },0);
+        if (score>lowestScore) {
+            showInputField();
+        }
+    }
+
+    function addToLeaderboard(name) {
+        let leaderboard = JSON.parse(storage.getItem("TetrisLeaderboard"));
+        const newEntry = [name, highscore];
+        leaderboard.push(newEntry);
+        leaderboard.sort((a, b)=> b[1] - a[1]);
+        if (leaderboard.length > 20) {
+            leaderboard.pop();
+        }
+        storage.setItem("TetrisLeaderboard", JSON.stringify(leaderboard));
+        displayLeaderboard();
+    }
+
+    // function promptForName(name) {
+         
+    //     // while (playerName == "") {
+
+    //     // }
+
+    //     return name;
+    // }
+
+    function showInputField() {
+        const title = document.createElement("div");
+        title.textContent = "Enter your name";
+        const inputField = document.createElement("input");
+        inputField.setAttribute("type", "text");
+        inputField.setAttribute("placeholder", "Type your name here...");
+        const button = document.createElement("button");
+        button.textContent = "SUBMIT";
+        namePrompt.append(title, inputField, button);
+        namePrompt.style.position = "absolute";
+        namePrompt.style.zIndex = "1000";
+        namePrompt.style.background = "white";
+        grid.append(namePrompt);
+        button.addEventListener("click", ()=> {
+            const name = inputField.value;
+            namePrompt.remove();
+            addToLeaderboard(name);
+        });
+    }
+
+    function displayLeaderboard() {
+        let leaderboard = storage.getItem("TetrisLeaderboard");
+        leaderboard = JSON.parse(leaderboard);
+        console.log(leaderboard);
+
+    }
+
+
+    function displayGameOver() {
         const textGame = document.createElement("div");
         const textOver = document.createElement("div");
+        const textPlayAgain = document.createElement("div");
+        const textClickHere = document.createElement("div");
+        gameOverText.classList.add("gameOverText");
         textGame.textContent = "Game";
         textOver.textContent = "Over";
-        gameOverText.style.display = "flex";
-        gameOverText.style.flexDirection = "column";
-        gameOverText.style.padding = "1rem";
-        gameOverText.style.fontSize = "3rem";
-        gameOverText.style.fontWeight = "bold";
-        gameOverText.style.background = "white";
-        gameOverText.style.zIndex = "999";
-        gameOverText.style.position = "absolute";
-        gameOverText.style.left = "13%";
-        gameOverText.style.top = "40%";
-        gameOverText.append(textGame, textOver);
+        textPlayAgain.textContent = "to play again";
+        textClickHere.textContent = "Click here";
+        textPlayAgain.style.fontSize = "1rem";
+        textClickHere.style.fontSize = "1rem";
+        gameOverText.append(textGame, textOver, textClickHere, textPlayAgain);
         grid.append(gameOverText);
-
-        playBtn.removeEventListener("click", pause);
     }
 
     function gameLoop() {
