@@ -9,6 +9,8 @@ Solved? | Description
   [x]   | Stroke lines overlap (visual issue)
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
+  [ ]   | text (game over/ start/ timer) positioning
+  [ ]   | reset button not reseting properly
 
 
   Roadmap:
@@ -23,10 +25,13 @@ Done? | Description
   [x]   | Countdown after pause
   [x]   | Game Over screen
   [x]   | Next block display
+  [x]   | Leveling
   [ ]   | Scoring
   [ ]   | Local storage of highscores
   [ ]   | LeaderBoard
   [ ]   | Mobile controls
+  [ ]   | Button layout / gameflow
+  [ ]   | move right on hold
 
 
 */
@@ -38,7 +43,11 @@ function initNewGame() {
 
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const nextCanvas = document.querySelector(".next-canvas");
+    const levelCanvas = document.querySelector("#level-progress");
+    const ltx = levelCanvas.getContext("2d");
     const ntx = nextCanvas.getContext("2d");
+    levelCanvas.height = 60;
+    levelCanvas.width = 60;
     nextCanvas.width = 120;
     nextCanvas.height = 72;
     const playBtn = document.querySelector("#play-btn");
@@ -60,8 +69,10 @@ function initNewGame() {
     let fallTimerID;
     // let gameTimerID;
     // let blockGenerated = false;
-    const normalSpeed = 500;
-    const softDrop = 25;
+    let levelCount = 0;
+    let level = 1;
+    let normalSpeed = 500 - ((level-1)*50);
+    let softDrop = 25 - ((level-1)*3);
     const hardDrop = 1;
     let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
     let isArrowDown = false;
@@ -193,6 +204,31 @@ function initNewGame() {
     }
 
     // functions
+
+    function drawLevelGraphics() {
+        let endPoint = levelCount/10 * 2;
+        // let endPoint = 2;
+
+        ltx.strokeStyle = "green";
+        ltx.lineWidth = 8;
+        // ltx.fillStyle = "green";
+        ltx.clearRect(0,0,60,60);
+        ltx.beginPath();
+        ltx.arc(30,30,24,0,endPoint*Math.PI);
+        ltx.stroke();
+        // ltx.fill();
+        // ltx.closePath();
+        // ltx.fillStyle = "grey";
+        // ltx.beginPath();
+        // ltx.arc(30,30,20,0,2*Math.PI);
+        // // ltx.stroke();
+        // ltx.fill();
+        // ltx.closePath();
+        ltx.fillStyle = "black";
+        ltx.font = "30px Arial";
+        let xPos = level == 10 ? 12 : 22;
+        ltx.fillText(level,xPos,40);
+    }
 
     function drawBlocks(array) {
         array.forEach(block => {
@@ -351,6 +387,18 @@ function initNewGame() {
             layer[1] = blockCount.length;
             if (blockCount.length == 10) {
                 deleteFullLayer(layer[0]);
+                levelCount++;
+                // console.log("Level count: "+levelCount);
+                if (levelCount == 10) {
+                    // level++;
+                    level = level < 10 ? ++level : 10;
+                    levelCount = 0;
+                    normalSpeed = 500 - ((level-1)*50);
+                    softDrop = 25 - ((level-1)*3);
+                    // console.log("Level: "+level);
+                    // console.log("Speed: "+normalSpeed);
+                    changeSpeed(normalSpeed);
+                }
             }
         });
     }
@@ -530,6 +578,7 @@ function initNewGame() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
         drawBlocks(activeArr);
         drawBlocks(blockArr);
+        drawLevelGraphics();
         requestAnimationFrame(gameLoop);
     }
 
@@ -538,6 +587,7 @@ function initNewGame() {
         if (!isGameOver) {
             clearInterval(fallTimerID);
             fallTimerID = setInterval(() => moveDown(), speed);
+            // console.log(speed);
         }
     }
 
