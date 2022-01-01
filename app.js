@@ -5,12 +5,14 @@
 /* Bugs:
 Solved? | Description
 ----------------------------------------------
-  [ ]   | Can rotate on another block and then stops
+  [x]   | Can rotate on another block and then stops
   [x]   | Stroke lines overlap (visual issue)
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
   [ ]   | text (game over/ start/ timer) positioning
   [ ]   | reset button not reseting properly
+  [ ]   | pause/play not functioning properly
+  [ ]   | Next block positioning in display box
 
 
   Roadmap:
@@ -27,7 +29,7 @@ Done? | Description
   [x]   | Next block display
   [x]   | Leveling
   [x]   | Scoring (clearing lines only)
-  [ ]   | Local storage of highscores
+  [ ]   | Local storage of highscores (prompt for name entry)
   [ ]   | LeaderBoard
   [ ]   | Mobile controls
   [ ]   | Button layout / gameflow
@@ -76,16 +78,17 @@ function initNewGame() {
     let normalSpeed = 500 - ((level-1)*50);
     let softDrop = 25 - ((level-1)*3);
     const hardDrop = 1;
-    let fallSpeed = normalSpeed;   //time interval (ms) between downward block steps
+    // let fallSpeed = normalSpeed;//time interval (ms) between downward block steps
     let isArrowDown = false;
-    let ishardDrop = false;
+    // let ishardDrop = false;
     let isGameOver = false;
     let layerCounter = [];
     let linesToClear = 10;
     let score = 0;
     let deleteCounter = 0;
     const scoreOnScreen = document.querySelector(".score-number");
-    
+    let rotationAllowed = false;
+
     scoreOnScreen.textContent = score;
 
     for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
@@ -118,6 +121,11 @@ function initNewGame() {
                 // activeArr.push(new Block(xPos,-BLOCK_SIZE,this.color));
                 activeArr.push(new Block(xPos,-BLOCK_SIZE,this.state));
             }
+            // activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            // activeArr.push(new Block(6*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            // activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+            // activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
+
         }
     }
 
@@ -309,7 +317,6 @@ function initNewGame() {
             changeSpeed(normalSpeed);
             selectBlock();
             // new O_Block();
-            // console.log("Actives: "+activeArr.length/4+"; ", "Passives: "+blockArr.length/4);
         }
     }
 
@@ -479,7 +486,7 @@ function initNewGame() {
 
     function rotateBlock() {
 
-        if (!isGameOver) {
+        if (!isGameOver ) {
             switch (activeArr[0].state.type) {
                 case "I":
                     rotateIBlock();
@@ -503,8 +510,12 @@ function initNewGame() {
         }
     }
 
-	function rotateJLTBlock() {
+	function rotateJLTBlock(back = false) {
+        let coef = back ? -1 : 1;
 		let orient = activeArr[0].state.orientation;
+        if (back) {
+            orient = orient == 0? 3 : --orient
+        }
 		const type = activeArr[0].state.type;
 		const dir1 = orient==0 || orient==3 ? -BLOCK_SIZE : BLOCK_SIZE;
 		const dir2 = orient==0 || orient==1 ? BLOCK_SIZE : -BLOCK_SIZE;
@@ -513,30 +524,36 @@ function initNewGame() {
 		switch (type) {
 			case "L":
 				axis = orient % 2 == 0 ? "x" : "y";
-				activeArr[1][axis] += 2*dir1;
+				activeArr[1][axis] += 2*dir1*coef;
 				break;
 			case "J":
 				axis = orient % 2 == 1 ? "x" : "y";
-				activeArr[1][axis] += 2*dir2;
+				activeArr[1][axis] += 2*dir2*coef;
 				break;
 			case "T":
-				activeArr[1].x += dir1;
-				activeArr[1].y += dir2;
+				activeArr[1].x += dir1*coef;
+				activeArr[1].y += dir2*coef;
 				break;
 		}
 
-		activeArr[2].x += dir2;
-		activeArr[2].y += -dir1;
+		activeArr[2].x += dir2*coef;
+		activeArr[2].y += -dir1*coef;
 
-		activeArr[3].x += -dir2;
-		activeArr[3].y += dir1;
+		activeArr[3].x += -dir2*coef;
+		activeArr[3].y += dir1*coef;
 
-		activeArr[0].state.orientation = orient == 3? 0 : ++orient;
+		
 
-		checkRotation(rotateJLTBlock);
+        if (!back) {
+            activeArr[0].state.orientation = orient == 3? 0 : ++orient;
+            checkRotation(rotateJLTBlock);
+        } 
+        // else {
+        //     // activeArr[0].state.orientation = orient == 0? 3 : --orient;
+        // }
 	}
 
-    function rotateSZBlock() {
+    function rotateSZBlock(back = false) {
         let orientation = activeArr[0].state.orientation;
         const direction = orientation=="horizontal"?2*BLOCK_SIZE:-2*BLOCK_SIZE;
           
@@ -544,10 +561,15 @@ function initNewGame() {
 		activeArr[3].y = activeArr[3].y-direction;
 		activeArr[0].state.orientation = orientation == "horizontal" ? "vertical" : "horizontal";
         
-		checkRotation(rotateSZBlock);
+        if (!back) {
+            checkRotation(rotateSZBlock);
+        } 
+        // else {
+        //     console.log("rotated back");
+        // }
     }
 
-    function rotateIBlock() {
+    function rotateIBlock(back = false) {
         let orientation = activeArr[0].state.orientation;
         const step = orientation == "horizontal"? BLOCK_SIZE : -BLOCK_SIZE;
 
@@ -565,7 +587,9 @@ function initNewGame() {
                 activeArr[i].state.orientation = "horizontal";
             }
         }
-        checkRotation(rotateIBlock);
+        if (!back) {
+            checkRotation(rotateIBlock);
+        }
     }
 
     function checkRotation(callback) {
@@ -576,7 +600,7 @@ function initNewGame() {
             // if (detectCollision()) {
             //     activeArr.forEach(block => block.y -= BLOCK_SIZE);
             // }
-            callback();
+            callback(true);
         }
     }
     
@@ -655,7 +679,7 @@ function initNewGame() {
             setTimeout(() => {
                 changeSpeed(normalSpeed);
             }, 3000);
-            playBtn.textContent = "PLAY";          
+            playBtn.textContent = "PAUSE";          
         }
     }
 
