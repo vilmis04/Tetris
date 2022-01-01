@@ -10,9 +10,9 @@ Solved? | Description
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
   [x]   | text (game over/ start/ timer) positioning
+  [x]   | Next block positioning in display box
   [ ]   | reset button not reseting properly
   [ ]   | pause/play not functioning properly
-  [ ]   | Next block positioning in display box
 
 
   Roadmap:
@@ -365,13 +365,27 @@ function initNewGame() {
     function drawNext(array) {
         array.forEach(block => {
             // const c = 0.75;
-            const o = 2.5*BLOCK_SIZE;
+            const size = BLOCK_SIZE;
+            switch (block.state.type) {
+                case "O":
+                    offsetX = 2.5*size;
+                    offsetY = 2.5*size;
+                    break;
+                case "I":
+                    offsetX = 2.5*size;
+                    offsetY = 2*size;
+                    break;
+                default:
+                    offsetX = 2*size;
+                    offsetY = 2.5*size;
+            }
+            
             ntx.fillStyle = block.state.color;
             ntx.strokeStyle = block.state.stroke;
-            ntx.fillRect(block.x-o, block.y+o, BLOCK_SIZE, BLOCK_SIZE);
+            ntx.fillRect(block.x-offsetX, block.y+offsetY, size, size);
             ntx.beginPath();
-            // ntx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
-            ntx.rect(block.x+1-o, block.y+1+o, BLOCK_SIZE-2, BLOCK_SIZE-2);
+            // ntx.fillRect(block.x, block.y, size, size);
+            ntx.rect(block.x+1-offsetX, block.y+1+offsetY, size-2, size-2);
             // ntx.fill();
             ntx.stroke();
         });
