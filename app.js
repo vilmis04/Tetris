@@ -9,7 +9,7 @@ Solved? | Description
   [x]   | Stroke lines overlap (visual issue)
   [x]   | Start speed should be normal speed (despite ArrowDown)
   [x]   | randomizeBlock should be changed to generate all pieces for two "bags"
-  [ ]   | text (game over/ start/ timer) positioning
+  [x]   | text (game over/ start/ timer) positioning
   [ ]   | reset button not reseting properly
   [ ]   | pause/play not functioning properly
   [ ]   | Next block positioning in display box
@@ -45,6 +45,9 @@ function initNewGame() {
 
     // definitions
 
+    // const grid = document.querySelector("#grid");
+    const grid = document.querySelector("#grid");
+    // console.log(grid);
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const nextCanvas = document.querySelector(".next-canvas");
     const levelCanvas = document.querySelector("#level-progress");
@@ -621,7 +624,7 @@ function initNewGame() {
         gameOverText.style.background = "white";
         gameOverText.style.zIndex = "999";
         gameOverText.style.position = "absolute";
-        gameOverText.style.left = "25%";
+        gameOverText.style.left = "13%";
         gameOverText.style.top = "40%";
         gameOverText.append(textGame, textOver);
         grid.append(gameOverText);
@@ -653,8 +656,8 @@ function initNewGame() {
         timer.style.color = "white";
         timer.style.zIndex = "999";
         timer.style.position = "absolute";
-        timer.style.left = "37.5%";
-        timer.style.top = "40%";
+        timer.style.left = "110px";
+        timer.style.top = "200px";
         grid.append(timer);
         
         timer.textContent = remainingTime;
