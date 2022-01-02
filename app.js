@@ -56,8 +56,10 @@ function initNewGame() {
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const nextCanvas = document.querySelector(".next-canvas");
     const levelCanvas = document.querySelector("#level-progress");
+    const gridCanvas = document.querySelector("#grid-canvas");
     const ltx = levelCanvas.getContext("2d");
     const ntx = nextCanvas.getContext("2d");
+    const gtx = gridCanvas.getContext("2d");
     levelCanvas.height = 60;
     levelCanvas.width = 60;
     nextCanvas.width = 120;
@@ -70,6 +72,8 @@ function initNewGame() {
     const GAME_WIDTH = 240;
     tetrisCanvas.height = GAME_HEIGHT;
     tetrisCanvas.width = GAME_WIDTH;
+    gridCanvas.height = tetrisCanvas.height;
+    gridCanvas.width = tetrisCanvas.width;
     const ctx = tetrisCanvas.getContext("2d");
     const BLOCK_SIZE = GAME_WIDTH/10;
     // const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
@@ -798,11 +802,44 @@ function initNewGame() {
         grid.append(gameOverText);
     }
 
+    function drawGrid() {
+        gtx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+        gtx.strokeStyle = "rgba(105,105,105,0.5)";
+        gtx.fillStyle = "rgba(105,105,105,0.5)";
+        gtx.lineWidth = 0.5;
+        // gtx.globalCompositeOperation='destination-over';
+        // gtx.setLineDash([5,5])
+        // gtx.beginPath();
+        for (let i=BLOCK_SIZE; i<GAME_WIDTH; i+=BLOCK_SIZE) {
+            for (let j=BLOCK_SIZE; j<GAME_HEIGHT; j+=BLOCK_SIZE) {
+               gtx.beginPath();
+               gtx.arc(i,j,1,0,2*Math.PI);
+               gtx.fill();
+            }
+        }
+                
+        //     }
+            // gtx.moveTo(i, 0);
+            // gtx.lineTo(i, GAME_HEIGHT);
+            
+        // }
+        // gtx.fill();
+
+        // for (let i=0; i<=GAME_HEIGHT; i+=BLOCK_SIZE) {
+        //     gtx.moveTo(0, i);
+        //     gtx.lineTo(GAME_WIDTH, i);
+        // }
+
+        // gtx.stroke();
+    }
+
     function gameLoop() {
         ctx.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+
         drawBlocks(activeArr);
         drawBlocks(blockArr);
         drawLevelGraphics();
+        drawGrid();
         requestAnimationFrame(gameLoop);
     }
 

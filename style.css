@@ -37,10 +37,19 @@ body {
 }
 
 #teris-canvas {
-  /* position: absolute; */
+  position: relative;
+  z-index: 100;
+  height: 480px;
+  width: 240px;
+  background: transparent;
+}
+#grid-canvas {
+  z-index: 0;
+  position: absolute;
   height: 480px;
   width: 240px;
   background: black;
+  left: 6px;
 }
 
 .main-panel {
