@@ -13,6 +13,7 @@ Solved? | Description
   [x]   | Next block positioning in display box
   [x]   | reset button not reseting properly
   [x]   | pause/play not functioning properly
+  [ ]   | leaderboard doesn't open if no local storage entry exists
 
 
   Roadmap:
@@ -33,8 +34,8 @@ Done? | Description
   [x]   | LeaderBoard
   [ ]   | LeaderBoard style updates
   [ ]   | Mobile controls
-  [ ]   | Button layout / gameflow
-  [ ]   | move right on hold
+  [x]   | Button layout / gameflow
+  [x]   | move right on hold
   [ ]   | Scoring for soft drop
   [ ]   | Scoring for hard drop
 
@@ -869,12 +870,12 @@ function initNewGame() {
     document.addEventListener("keyup", (event) => {
 
         switch (event.key) {
-            case "ArrowRight":
-                shiftRight();
-                break;
-            case "ArrowLeft":
-                shiftLeft();
-                break;
+            // case "ArrowRight":
+            //     shiftRight();
+            //     break;
+            // case "ArrowLeft":
+            //     shiftLeft();
+            //     break;
             case "ArrowUp":
                 rotateBlock();
                 break;
@@ -898,6 +899,12 @@ function initNewGame() {
                     changeSpeed(softDrop);
                     isArrowDown = true;
                 }
+                break;
+            case "ArrowRight":
+                shiftRight();
+                break;
+            case "ArrowLeft":
+                shiftLeft();
                 break;
         }
     });
