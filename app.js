@@ -242,6 +242,7 @@ function initNewGame() {
     function drawLevelGraphics() {
         let endPoint = levelCount/linesToClear * 2;
         // let endPoint = 2;
+        endPoint = level == 10? 2 : endPoint;
 
         ltx.strokeStyle = "green";
         ltx.lineWidth = 8;
@@ -259,9 +260,9 @@ function initNewGame() {
         // ltx.fill();
         // ltx.closePath();
         ltx.fillStyle = "black";
-        ltx.font = "30px Arial";
-        let xPos = level == 10 ? 12 : 22;
-        ltx.fillText(level,xPos,40);
+        ltx.font = "30px VT323";
+        let xPos = level == 10 ? 18 : 24;
+        ltx.fillText(level,xPos,38);
     }
 
     function drawBlocks(array) {

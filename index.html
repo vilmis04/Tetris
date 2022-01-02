@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tetris</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
     <script src="app.js"></script>
-</head>
-<body>
-    
+  </head>
+  <body>
     <div id="grid">
-        <div class="game-title">TETRIS</div>
-        <div class="game-area">
-            <canvas id="teris-canvas" class="tetris-canvas"></canvas>
-            <div class="main-panel">
-                <div class="next-title">NEXT</div>
-                <canvas class="next-canvas"></canvas>
-                <div class="level">LEVEL: </div>
-                <!-- <div class="level-number">Level progress</div> -->
-                <canvas id="level-progress" class="level-progress"></canvas>
-                <div class="score-title">SCORE</div>
-                <div class="score-number">XXXX</div>
-                <div class="best-title">HIGHSCORE</div>
-                <div class="best-number">XXXX</div>
-                <div class="btn-panel">
-                    <div id="play-btn" class="play-pause-btn btn">PLAY</div>
-                    <div id="reset-btn" class="reset-btn btn">RESET</div>
-                    <div id="ldrbrd-btn" class="leaderboard-btn btn">HIGHSCORES</div>
-                </div>
-            </div>
+      <div class="game-title">TETRIS</div>
+      <div class="how-to">Controls: ← left, → right, ↑ rotate,<br>↓ soft drop, SPACEBAR hard drop</div>
+      <div class="game-area">
+        <canvas id="teris-canvas" class="tetris-canvas"></canvas>
+        <div class="main-panel">
+          <div class="next-title">NEXT</div>
+          <canvas class="next-canvas"></canvas>
+          <div class="level">LEVEL:</div>
+          <!-- <div class="level-number">Level progress</div> -->
+          <canvas id="level-progress" class="level-progress"></canvas>
+          <div class="score-title">SCORE</div>
+          <div class="score-number">XXXX</div>
+          <div class="best-title">HIGHSCORE</div>
+          <div class="best-number">XXXX</div>
+          <div class="btn-panel">
+            <div id="play-btn" class="play-pause-btn btn">PLAY</div>
+            <div id="reset-btn" class="reset-btn btn">RESET</div>
+            <div id="ldrbrd-btn" class="leaderboard-btn btn">HIGHSCORES</div>
+          </div>
         </div>
+      </div>
     </div>
-
-</body>
+  </body>
 </html>
