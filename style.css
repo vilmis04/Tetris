@@ -198,6 +198,13 @@ body {
   /* margin */
   padding: 0 1rem;
   font-size: 20px;
+  user-select: none;
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.ctrl:hover {
+  background: darkgrey;
 }
 
 

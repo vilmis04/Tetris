@@ -34,7 +34,7 @@ Done? | Description
   [x]   | Local storage of highscores (prompt for name entry)
   [x]   | LeaderBoard
   [x]   | LeaderBoard style updates
-  [ ]   | Mobile controls
+  [x]   | Mobile controls
   [ ]   | grid display
   [x]   | Button layout / gameflow
   [x]   | move right on hold
@@ -110,6 +110,8 @@ function initNewGame() {
     const rotateBtn = document.querySelector(".rotate");
     const softBtn = document.querySelector(".soft-drop");
     const hardBtn = document.querySelector(".hard-drop");
+
+    let moveTimerID;
 
     scoreOnScreen.textContent = score;
     highscoreOnScreen.textContent = highscore;
@@ -868,9 +870,9 @@ function initNewGame() {
 
     // game
 
-    // if (!isMobile) {
-    //     mobileControls.classList.add("hidden");
-    // }
+    if (isMobile) {
+        mobileControls.classList.add("hidden");
+    }
 
     playBtn.addEventListener("click", startGame, {once: true});
     ldrbrdBtn.addEventListener("click", displayLeaderboard);
@@ -929,9 +931,30 @@ function initNewGame() {
         }
     });
 
-    leftBtn.addEventListener("mousedown", shiftLeft);
-    rightBtn.addEventListener("mousedown", shiftRight);
+    leftBtn.addEventListener("click", shiftLeft);
+    leftBtn.addEventListener("mousedown", ()=>{
+        clearInterval(moveTimerID);
+        moveTimerID = setInterval(shiftLeft,100);
+    });
+    leftBtn.addEventListener("mouseup", ()=>{
+        clearInterval(moveTimerID);
+    });
+    rightBtn.addEventListener("click", shiftRight);
+    rightBtn.addEventListener("mousedown", ()=>{
+        clearInterval(moveTimerID);
+        moveTimerID = setInterval(shiftRight,100);
+    });
+    rightBtn.addEventListener("mouseup", ()=>{
+        clearInterval(moveTimerID);
+    });
     rotateBtn.addEventListener("click", rotateBlock);
-    // softDrop.
-    
+    softBtn.addEventListener("mousedown", ()=>{
+        changeSpeed(softDrop);
+    });
+    softBtn.addEventListener("mouseup", ()=>{
+        changeSpeed(normalSpeed);
+    });
+    hardBtn.addEventListener("click", ()=> {
+        changeSpeed(hardDrop);
+    })
 }
