@@ -935,7 +935,7 @@ function initNewGame() {
         }
     });
 
-    // leftBtn.addEventListener("click", shiftLeft);
+    leftBtn.addEventListener("click", shiftLeft);
     leftBtn.addEventListener("touchstart", (event)=>{
         event.preventDefault();
         clearInterval(moveTimerID);
@@ -944,7 +944,7 @@ function initNewGame() {
     leftBtn.addEventListener("touchend", ()=>{
         clearInterval(moveTimerID);
     });
-    // rightBtn.addEventListener("click", shiftRight);
+    rightBtn.addEventListener("click", shiftRight);
     rightBtn.addEventListener("touchstart", ()=>{
         clearInterval(moveTimerID);
         moveTimerID = setInterval(shiftRight,100);
