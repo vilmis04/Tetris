@@ -870,9 +870,13 @@ function initNewGame() {
 
     // game
 
-    if (isMobile) {
-        mobileControls.classList.add("hidden");
-    }
+    // if (isMobile) {
+    //     mobileControls.classList.add("hidden");
+    // }
+
+    if ('ontouchstart' in window) {
+        mobileControls.classList.remove("hidden");
+      }
 
     playBtn.addEventListener("click", startGame, {once: true});
     ldrbrdBtn.addEventListener("click", displayLeaderboard);
