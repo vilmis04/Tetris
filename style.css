@@ -20,7 +20,7 @@ body {
   /* position: absolute; */
   border: 1px solid black;
   background-color: grey;
-  height: 640px;
+  height: 680px;
   /* max-width: 480px;
   min-width: 380px; */
   width: 380px;
@@ -29,6 +29,7 @@ body {
 }
 
 .game-area {
+  margin: 1rem 0;
   display: flex;
   align-items: center;
   justify-content: space-evenly;
@@ -182,4 +183,24 @@ body {
 .score-title,
 .best-title {
   font-size: 20px;
+}
+
+.mobile-controls {
+  margin: 1rem 0;
+  width: 90%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.ctrl {
+  border: solid black 1px;
+  border-radius: 5px;
+  /* margin */
+  padding: 0 1rem;
+  font-size: 20px;
+}
+
+
+.hidden {
+  display: none;
 }

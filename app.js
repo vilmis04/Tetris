@@ -51,6 +51,7 @@ function initNewGame() {
 
     // const grid = document.querySelector("#grid");
     const grid = document.querySelector("#grid");
+    const mobileControls = document.querySelector(".mobile-controls");
     // console.log(grid);
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const nextCanvas = document.querySelector(".next-canvas");
@@ -103,6 +104,12 @@ function initNewGame() {
     const namePrompt = document.createElement("div");
     let isLeaderboardOpen = false;
     let isLeaderboardCreated = false;
+
+    const leftBtn = document.querySelector(".left");
+    const rightBtn = document.querySelector(".right");
+    const rotateBtn = document.querySelector(".rotate");
+    const softBtn = document.querySelector(".soft-drop");
+    const hardBtn = document.querySelector(".hard-drop");
 
     scoreOnScreen.textContent = score;
     highscoreOnScreen.textContent = highscore;
@@ -853,8 +860,17 @@ function initNewGame() {
         playBtn.addEventListener("click", pause);
         playBtn.textContent = "PAUSE";
     }
-   
+
+    function isMobile() {
+        try{ document.createEvent("TouchEvent"); return true; }
+        catch(e){ return false; }
+    }
+
     // game
+
+    // if (!isMobile) {
+    //     mobileControls.classList.add("hidden");
+    // }
 
     playBtn.addEventListener("click", startGame, {once: true});
     ldrbrdBtn.addEventListener("click", displayLeaderboard);
@@ -912,4 +928,10 @@ function initNewGame() {
                 break;
         }
     });
+
+    leftBtn.addEventListener("mousedown", shiftLeft);
+    rightBtn.addEventListener("mousedown", shiftRight);
+    rotateBtn.addEventListener("click", rotateBlock);
+    // softDrop.
+    
 }
