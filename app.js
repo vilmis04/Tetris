@@ -35,7 +35,7 @@ Done? | Description
   [x]   | LeaderBoard
   [x]   | LeaderBoard style updates
   [x]   | Mobile controls
-  [ ]   | grid display
+  [x]   | grid display
   [x]   | Button layout / gameflow
   [x]   | move right on hold
   [ ]   | Scoring for soft drop
@@ -972,7 +972,10 @@ function initNewGame() {
         }
     });
 
-    leftBtn.addEventListener("click", shiftLeft);
+    leftBtn.addEventListener("click", () => {
+        clearInterval(moveTimerID);
+        shiftLeft();
+    });
     leftBtn.addEventListener("touchstart", (event)=>{
         event.preventDefault();
         clearInterval(moveTimerID);
@@ -981,7 +984,10 @@ function initNewGame() {
     leftBtn.addEventListener("touchend", ()=>{
         clearInterval(moveTimerID);
     });
-    rightBtn.addEventListener("click", shiftRight);
+    rightBtn.addEventListener("click", ()=> {
+        clearInterval(moveTimerID);
+        shiftRight();
+    });
     rightBtn.addEventListener("touchstart", ()=>{
         clearInterval(moveTimerID);
         moveTimerID = setInterval(shiftRight,100);
