@@ -912,6 +912,7 @@ function initNewGame() {
     // }
 
     if ('ontouchstart' in window) {
+        grid.style.height = "720px";
         mobileControls.classList.remove("hidden");
       }
 
