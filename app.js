@@ -13,7 +13,7 @@ Solved? | Description
   [x]   | Next block positioning in display box
   [x]   | reset button not reseting properly
   [x]   | pause/play not functioning properly
-  [ ]   | leaderboard doesn't open if no local storage entry exists
+  [x]   | leaderboard doesn't open if no local storage entry exists
 
 
   Roadmap:
@@ -104,6 +104,10 @@ function initNewGame() {
 
     scoreOnScreen.textContent = score;
     highscoreOnScreen.textContent = highscore;
+
+    if (!storage.getItem("TetrisLeaderboard")) {
+        storage.setItem("TetrisLeaderboard",JSON.stringify([]));
+    }
 
     for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
         layerCounter.push([i*BLOCK_SIZE, 0]);
@@ -633,13 +637,13 @@ function initNewGame() {
     }
     
     function gameOver() {
-        console.log("Game Over");
+        // console.log("Game Over");
         isGameOver = true;
         clearInterval(fallTimerID);
 
         displayGameOver();
 
-        updateHighScore();
+        setTimeout(updateHighScore,750);
 
         gameOverText.addEventListener("click", ()=>{
             gameOverText.remove();
@@ -661,22 +665,18 @@ function initNewGame() {
     function updateLeaderboard() {
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
-        if (leaderboard == null) {
-            leaderboard = [];
-            storage.setItem("TetrisLeaderboard",JSON.stringify(leaderboard));
-        }
-        if (leaderboard.length > 5) {
-            const lowestScore = leaderboard.reduce((acc, val) => {
-                acc = acc<val? acc : val;
-                return acc;
-            },0);
-            if (score>lowestScore) {
-                showInputField();
-            }
-        } else {
+        // if (leaderboard == null) {
+        //     leaderboard = [];
+        //     storage.setItem("TetrisLeaderboard",JSON.stringify(leaderboard));
+        // }
+        const lowestScore = leaderboard.reduce((acc, val) => {
+            acc = acc<val? acc : val;
+            return acc;
+        },0);
+        // console.log(lowestScore[1]);
+        if (leaderboard.length < 5 || score>lowestScore[1]) {
             showInputField();
         }
-
     }
 
     function addToLeaderboard(name) {
