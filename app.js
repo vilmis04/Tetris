@@ -935,30 +935,60 @@ function initNewGame() {
         }
     });
 
-    leftBtn.addEventListener("click", shiftLeft);
-    leftBtn.addEventListener("mousedown", ()=>{
+    // leftBtn.addEventListener("click", shiftLeft);
+    leftBtn.addEventListener("touchstart", (event)=>{
+        event.preventDefault();
         clearInterval(moveTimerID);
         moveTimerID = setInterval(shiftLeft,100);
     });
-    leftBtn.addEventListener("mouseup", ()=>{
+    leftBtn.addEventListener("touchend", ()=>{
         clearInterval(moveTimerID);
     });
-    rightBtn.addEventListener("click", shiftRight);
-    rightBtn.addEventListener("mousedown", ()=>{
+    // rightBtn.addEventListener("click", shiftRight);
+    rightBtn.addEventListener("touchstart", ()=>{
         clearInterval(moveTimerID);
         moveTimerID = setInterval(shiftRight,100);
     });
-    rightBtn.addEventListener("mouseup", ()=>{
+    rightBtn.addEventListener("touchend", ()=>{
         clearInterval(moveTimerID);
     });
     rotateBtn.addEventListener("click", rotateBlock);
-    softBtn.addEventListener("mousedown", ()=>{
+    softBtn.addEventListener("touchstart", (event)=>{
+        event.preventDefault();
         changeSpeed(softDrop);
     });
-    softBtn.addEventListener("mouseup", ()=>{
+    softBtn.addEventListener("touchend", (event)=>{
+        event.preventDefault();
         changeSpeed(normalSpeed);
     });
     hardBtn.addEventListener("click", ()=> {
         changeSpeed(hardDrop);
-    })
+    });
+
+    // leftBtn.addEventListener("click", shiftLeft);
+    // leftBtn.addEventListener("mousedown", ()=>{
+    //     clearInterval(moveTimerID);
+    //     moveTimerID = setInterval(shiftLeft,100);
+    // });
+    // leftBtn.addEventListener("mouseup", ()=>{
+    //     clearInterval(moveTimerID);
+    // });
+    // rightBtn.addEventListener("click", shiftRight);
+    // rightBtn.addEventListener("mousedown", ()=>{
+    //     clearInterval(moveTimerID);
+    //     moveTimerID = setInterval(shiftRight,100);
+    // });
+    // rightBtn.addEventListener("mouseup", ()=>{
+    //     clearInterval(moveTimerID);
+    // });
+    // rotateBtn.addEventListener("click", rotateBlock);
+    // softBtn.addEventListener("mousedown", ()=>{
+    //     changeSpeed(softDrop);
+    // });
+    // softBtn.addEventListener("mouseup", ()=>{
+    //     changeSpeed(normalSpeed);
+    // });
+    // hardBtn.addEventListener("click", ()=> {
+    //     changeSpeed(hardDrop);
+    // });
 }
