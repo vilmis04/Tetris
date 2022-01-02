@@ -20,7 +20,7 @@ body {
   /* position: absolute; */
   border: 1px solid black;
   background-color: grey;
-  height: 680px;
+  height: 720px;
   /* max-width: 480px;
   min-width: 380px; */
   width: 380px;
@@ -196,7 +196,7 @@ body {
   border: solid black 1px;
   border-radius: 5px;
   /* margin */
-  padding: 0 1rem;
+  padding: 1rem 1rem;
   font-size: 20px;
   user-select: none;
   background-color: lightgray;
