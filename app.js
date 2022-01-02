@@ -860,7 +860,7 @@ function initNewGame() {
         timer.style.zIndex = "999";
         timer.style.position = "absolute";
         timer.style.left = "110px";
-        timer.style.top = "200px";
+        timer.style.top = "250px";
         grid.append(timer);
         
         timer.textContent = remainingTime;
