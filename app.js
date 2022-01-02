@@ -14,6 +14,7 @@ Solved? | Description
   [x]   | reset button not reseting properly
   [x]   | pause/play not functioning properly
   [x]   | leaderboard doesn't open if no local storage entry exists
+  [x]   | multiple instances of leaderboard can be opnened
 
 
   Roadmap:
@@ -32,8 +33,9 @@ Done? | Description
   [x]   | Scoring (clearing lines only)
   [x]   | Local storage of highscores (prompt for name entry)
   [x]   | LeaderBoard
-  [ ]   | LeaderBoard style updates
+  [x]   | LeaderBoard style updates
   [ ]   | Mobile controls
+  [ ]   | grid display
   [x]   | Button layout / gameflow
   [x]   | move right on hold
   [ ]   | Scoring for soft drop
@@ -717,8 +719,9 @@ function initNewGame() {
     }
 
     function displayLeaderboard() {
-        if (isLeaderboardOpen) return;
-        isLeaderboardOpen = true;
+        // if (isLeaderboardOpen) return;
+        if (onScreenLeadboard.firstChild) return;
+        // isLeaderboardOpen = true;
         if (!isLeaderboardCreated) {
             generateLeaderboard();
         }
@@ -760,7 +763,7 @@ function initNewGame() {
         onScreenLeadboard.append(closeBtn);
         closeBtn.addEventListener("click", ()=> {
             onScreenLeadboard.remove();
-            isLeaderboardOpen = false;
+            // isLeaderboardOpen = false;
             isLeaderboardCreated = false;
             while (onScreenLeadboard.firstChild) {
                 onScreenLeadboard.firstChild.remove();
