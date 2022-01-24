@@ -49,10 +49,8 @@ function initNewGame() {
 
     // definitions
 
-    // const grid = document.querySelector("#grid");
     const grid = document.querySelector("#grid");
     const mobileControls = document.querySelector(".mobile-controls");
-    // console.log(grid);
     const tetrisCanvas = document.querySelector(".tetris-canvas");
     const nextCanvas = document.querySelector(".next-canvas");
     const levelCanvas = document.querySelector("#level-progress");
@@ -76,23 +74,18 @@ function initNewGame() {
     gridCanvas.width = tetrisCanvas.width;
     const ctx = tetrisCanvas.getContext("2d");
     const BLOCK_SIZE = GAME_WIDTH/10;
-    // const BLOCK_COUNT = GAME_WIDTH/BLOCK_SIZE; // number of blocks in layer
     let blockArr = [];
     let activeArr = [];
 	let orderArr = [];
     let nextShape = [];
 
     let fallTimerID;
-    // let gameTimerID;
-    // let blockGenerated = false;
     let levelCount = 0;
     let level = 1;
     let normalSpeed = 500 - ((level-1)*50);
     let softDrop = 25 - ((level-1)*3);
     const hardDrop = 1;
-    // let fallSpeed = normalSpeed;//time interval (ms) between downward block steps
     let isArrowDown = false;
-    // let ishardDrop = false;
     let isGameOver = false;
     let layerCounter = [];
     let linesToClear = 10;
@@ -100,7 +93,6 @@ function initNewGame() {
     let deleteCounter = 0;
     const scoreOnScreen = document.querySelector(".score-number");
     const highscoreOnScreen = document.querySelector(".best-number");
-    // let rotationAllowed = false;
     const storage = window.localStorage;
     let highscore = storage.getItem("TetrisHighscore");
     highscore = highscore ? highscore : 0;
@@ -126,14 +118,12 @@ function initNewGame() {
 
     for (let i=0; i<GAME_HEIGHT/BLOCK_SIZE; i++) {
         layerCounter.push([i*BLOCK_SIZE, 0]);
-        // [layer_height, block_count (initially 0)]
     }
 
     // classes
 
     class Block {
         constructor(x,y,state) {
-        // constructor(x,y) {
             this.x = x;
             this.y = y;
             this.state = state;
@@ -151,14 +141,8 @@ function initNewGame() {
 
             for (let i=0; i<4; i++) {
                 let xPos = 3*BLOCK_SIZE+i*BLOCK_SIZE;
-                // activeArr.push(new Block(xPos,-BLOCK_SIZE,this.color));
                 activeArr.push(new Block(xPos,-BLOCK_SIZE,this.state));
             }
-            // activeArr.push(new Block(4*BLOCK_SIZE,-BLOCK_SIZE,this.state));
-            // activeArr.push(new Block(6*BLOCK_SIZE,-BLOCK_SIZE,this.state));
-            // activeArr.push(new Block(3*BLOCK_SIZE,-BLOCK_SIZE,this.state));
-            // activeArr.push(new Block(5*BLOCK_SIZE,-BLOCK_SIZE,this.state));
-
         }
     }
 
@@ -256,24 +240,14 @@ function initNewGame() {
 
     function drawLevelGraphics() {
         let endPoint = levelCount/linesToClear * 2;
-        // let endPoint = 2;
         endPoint = level == 10? 2 : endPoint;
 
         ltx.strokeStyle = "green";
         ltx.lineWidth = 8;
-        // ltx.fillStyle = "green";
         ltx.clearRect(0,0,60,60);
         ltx.beginPath();
         ltx.arc(30,30,24,0,endPoint*Math.PI);
         ltx.stroke();
-        // ltx.fill();
-        // ltx.closePath();
-        // ltx.fillStyle = "grey";
-        // ltx.beginPath();
-        // ltx.arc(30,30,20,0,2*Math.PI);
-        // // ltx.stroke();
-        // ltx.fill();
-        // ltx.closePath();
         ltx.fillStyle = "black";
         ltx.font = "30px VT323";
         let xPos = level == 10 ? 18 : 24;
@@ -286,30 +260,28 @@ function initNewGame() {
             ctx.strokeStyle = block.state.stroke;
             ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
             ctx.beginPath();
-            // ctx.fillRect(block.x, block.y, BLOCK_SIZE, BLOCK_SIZE);
             ctx.rect(block.x+1, block.y+1, BLOCK_SIZE-2, BLOCK_SIZE-2);
-            // ctx.fill();
             ctx.stroke();
 
         });        
     }
+
     function moveDown () {
         const isBottom = activeArr.some(block => block.y+BLOCK_SIZE == GAME_HEIGHT);
- 
         if (!isBottom && !detectCollision() && !isGameOver) {
-        // if (!isBottom) {
             activeArr.forEach(block => block.y += BLOCK_SIZE);
         } else {
-            // console.log("Bottom!");
             generateNewBlock();
         }
     }
+
     function shiftRight() {
         const isRight = activeArr.some(block => block.x+BLOCK_SIZE == GAME_WIDTH);
         if (!isGameOver && !isRight && !hasObstacle("right")) {
             activeArr.forEach(block => block.x += BLOCK_SIZE);
         }
     }
+
     function shiftLeft() {
         const isLeft = activeArr.some(block => block.x == 0);
         if (!isGameOver && !isLeft && !hasObstacle("left")) {
@@ -345,12 +317,10 @@ function initNewGame() {
         if (!isGameOver) {
             activeArr.forEach(block => blockArr.push(block));
             activeArr = [];
-            // --> check if any layer is full
             detectFullLayer();
             updateScore();
             changeSpeed(normalSpeed);
             selectBlock();
-            // new O_Block();
         }
     }
 
@@ -378,24 +348,19 @@ function initNewGame() {
     function selectBlock() {
 		let number = orderArr.shift();
 		let randomArr = generateRandomOrder();
-		// console.log(orderArr.length);
 		if (orderArr.length < 9) {
 			orderArr = orderArr.concat(randomArr);
 		}
-		// console.log("af: "+orderArr.length);
         shapeSelector(number);
         shapeSelector(orderArr[0]);
         nextShape = [];
         nextShape = activeArr.splice(-4);
-        // console.log(nextShape[0].state.color+" "+nextShape[0].state.type);
         ntx.clearRect(0,0,nextCanvas.width, nextCanvas.height);
         drawNext(nextShape);
-        // console.log(nextShape);
     }
 
     function drawNext(array) {
         array.forEach(block => {
-            // const c = 0.75;
             const size = BLOCK_SIZE;
             switch (block.state.type) {
                 case "O":
@@ -415,9 +380,7 @@ function initNewGame() {
             ntx.strokeStyle = block.state.stroke;
             ntx.fillRect(block.x-offsetX, block.y+offsetY, size, size);
             ntx.beginPath();
-            // ntx.fillRect(block.x, block.y, size, size);
             ntx.rect(block.x+1-offsetX, block.y+1+offsetY, size-2, size-2);
-            // ntx.fill();
             ntx.stroke();
         });
     }
@@ -448,13 +411,6 @@ function initNewGame() {
         }
     }
 
-	// function randomizeBlock() {
-	// 	if (orderArr.length <= 9) {
-	// 		orderArr.concat(generateRandomOrder());
-	// 	}
-	// 	return orderArr.shift();
-	// }
-
 	function generateRandomOrder() {
 		let arr = [];
 		while (arr.length<7) {
@@ -474,15 +430,11 @@ function initNewGame() {
                 deleteFullLayer(layer[0]);
                 deleteCounter++;
                 levelCount++;
-                // console.log("Level count: "+levelCount);
                 if (levelCount == linesToClear) {
-                    // level++;
                     level = level < 10 ? ++level : 10;
                     levelCount = 0;
                     normalSpeed = 500 - ((level-1)*50);
                     softDrop = 25 - ((level-1)*3);
-                    // console.log("Level: "+level);
-                    // console.log("Speed: "+normalSpeed);
                     changeSpeed(normalSpeed);
                 }
             }
@@ -596,9 +548,6 @@ function initNewGame() {
             activeArr[0].state.orientation = orient == 3? 0 : ++orient;
             checkRotation(rotateJLTBlock);
         } 
-        // else {
-        //     // activeArr[0].state.orientation = orient == 0? 3 : --orient;
-        // }
 	}
 
     function rotateSZBlock(back = false) {
@@ -612,9 +561,6 @@ function initNewGame() {
         if (!back) {
             checkRotation(rotateSZBlock);
         } 
-        // else {
-        //     console.log("rotated back");
-        // }
     }
 
     function rotateIBlock(back = false) {
@@ -645,15 +591,11 @@ function initNewGame() {
         const exceedsLeft = activeArr.some(block => block.x < 0);
         const exceedsBottom = activeArr.some(block => block.y+BLOCK_SIZE > GAME_HEIGHT);
         if (detectCollision() || exceedsLeft || exceedsRight || exceedsBottom) {
-            // if (detectCollision()) {
-            //     activeArr.forEach(block => block.y -= BLOCK_SIZE);
-            // }
             callback(true);
         }
     }
     
     function gameOver() {
-        // console.log("Game Over");
         isGameOver = true;
         clearInterval(fallTimerID);
 
@@ -681,15 +623,10 @@ function initNewGame() {
     function updateLeaderboard() {
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
-        // if (leaderboard == null) {
-        //     leaderboard = [];
-        //     storage.setItem("TetrisLeaderboard",JSON.stringify(leaderboard));
-        // }
         const lowestScore = leaderboard.reduce((acc, val) => {
             acc = acc<val? acc : val;
             return acc;
         },0);
-        // console.log(lowestScore[1]);
         if (leaderboard.length < 5 || score>lowestScore[1]) {
             showInputField();
         }
@@ -706,12 +643,6 @@ function initNewGame() {
         storage.setItem("TetrisLeaderboard", JSON.stringify(leaderboard));
         displayLeaderboard();
     }
-
-    // function promptForName(name) {
-    //     // while (playerName == "") {
-    //     // }
-    //     return name;
-    // }
 
     function showInputField() {
         const title = document.createElement("div");
@@ -732,21 +663,12 @@ function initNewGame() {
     }
 
     function displayLeaderboard() {
-        // if (isLeaderboardOpen) return;
         if (onScreenLeadboard.firstChild) return;
-        // isLeaderboardOpen = true;
         if (!isLeaderboardCreated) {
             generateLeaderboard();
         }
-        // generateLeaderboard();
-
 
         grid.append(onScreenLeadboard);
-        // closeBtn.addEventListener("click", ()=> {
-        //     onScreenLeadboard.remove();
-        //     isLeaderboardOpen = false;
-        // });
-
     }
 
     function generateLeaderboard() {
@@ -754,7 +676,6 @@ function initNewGame() {
         let counter = 0;
         let leaderboard = storage.getItem("TetrisLeaderboard");
         leaderboard = JSON.parse(leaderboard);
-        // console.log(leaderboard);
         const leaderboardTitle = document.createElement("div");
         leaderboardTitle.classList.add("leaderboard-title");
         leaderboardTitle.textContent = "LEADERBOARD";
@@ -776,7 +697,6 @@ function initNewGame() {
         onScreenLeadboard.append(closeBtn);
         closeBtn.addEventListener("click", ()=> {
             onScreenLeadboard.remove();
-            // isLeaderboardOpen = false;
             isLeaderboardCreated = false;
             while (onScreenLeadboard.firstChild) {
                 onScreenLeadboard.firstChild.remove();
@@ -807,9 +727,6 @@ function initNewGame() {
         gtx.strokeStyle = "rgba(105,105,105,0.5)";
         gtx.fillStyle = "rgba(105,105,105,0.5)";
         gtx.lineWidth = 0.5;
-        // gtx.globalCompositeOperation='destination-over';
-        // gtx.setLineDash([5,5])
-        // gtx.beginPath();
         for (let i=BLOCK_SIZE; i<GAME_WIDTH; i+=BLOCK_SIZE) {
             for (let j=BLOCK_SIZE; j<GAME_HEIGHT; j+=BLOCK_SIZE) {
                gtx.beginPath();
@@ -817,20 +734,6 @@ function initNewGame() {
                gtx.fill();
             }
         }
-                
-        //     }
-            // gtx.moveTo(i, 0);
-            // gtx.lineTo(i, GAME_HEIGHT);
-            
-        // }
-        // gtx.fill();
-
-        // for (let i=0; i<=GAME_HEIGHT; i+=BLOCK_SIZE) {
-        //     gtx.moveTo(0, i);
-        //     gtx.lineTo(GAME_WIDTH, i);
-        // }
-
-        // gtx.stroke();
     }
 
     function gameLoop() {
@@ -844,11 +747,9 @@ function initNewGame() {
     }
 
     function changeSpeed (speed) {
-        // fallSpeed = fallSpeed == normalSpeed ? softDrop : normalSpeed;
         if (!isGameOver) {
             clearInterval(fallTimerID);
             fallTimerID = setInterval(() => moveDown(), speed);
-            // console.log(speed);
         }
     }
 
@@ -907,10 +808,6 @@ function initNewGame() {
 
     // game
 
-    // if (isMobile) {
-    //     mobileControls.classList.add("hidden");
-    // }
-
     if ('ontouchstart' in window) {
         grid.style.height = "720px";
         mobileControls.classList.remove("hidden");
@@ -924,9 +821,6 @@ function initNewGame() {
         initNewGame();
         playBtn.textContent = "PLAY";
         gameOverText.remove();
-        // startCountdown();
-        // startGame();
-        // playBtn.removeEventListener("click", startGame, {once: true});
     });
 
     gameLoop();
@@ -934,24 +828,16 @@ function initNewGame() {
     document.addEventListener("keyup", (event) => {
 
         switch (event.key) {
-            // case "ArrowRight":
-            //     shiftRight();
-            //     break;
-            // case "ArrowLeft":
-            //     shiftLeft();
-            //     break;
             case "ArrowUp":
                 rotateBlock();
                 break;
             case "ArrowDown":
-                // console.log("Slow down!");
                 changeSpeed(normalSpeed);
                 isArrowDown = false;
                 break;
             case " ":
                 changeSpeed(hardDrop);
-                // ishardDrop = false;
-        }
+            }
     });
 
     document.addEventListener("keydown", (event) => {
@@ -959,7 +845,6 @@ function initNewGame() {
         switch (event.key) {
             case "ArrowDown":
                 if (!isArrowDown) {
-                    // console.log("Speed up!");
                     changeSpeed(softDrop);
                     isArrowDown = true;
                 }
@@ -1008,31 +893,4 @@ function initNewGame() {
     hardBtn.addEventListener("click", ()=> {
         changeSpeed(hardDrop);
     });
-
-    // leftBtn.addEventListener("click", shiftLeft);
-    // leftBtn.addEventListener("mousedown", ()=>{
-    //     clearInterval(moveTimerID);
-    //     moveTimerID = setInterval(shiftLeft,100);
-    // });
-    // leftBtn.addEventListener("mouseup", ()=>{
-    //     clearInterval(moveTimerID);
-    // });
-    // rightBtn.addEventListener("click", shiftRight);
-    // rightBtn.addEventListener("mousedown", ()=>{
-    //     clearInterval(moveTimerID);
-    //     moveTimerID = setInterval(shiftRight,100);
-    // });
-    // rightBtn.addEventListener("mouseup", ()=>{
-    //     clearInterval(moveTimerID);
-    // });
-    // rotateBtn.addEventListener("click", rotateBlock);
-    // softBtn.addEventListener("mousedown", ()=>{
-    //     changeSpeed(softDrop);
-    // });
-    // softBtn.addEventListener("mouseup", ()=>{
-    //     changeSpeed(normalSpeed);
-    // });
-    // hardBtn.addEventListener("click", ()=> {
-    //     changeSpeed(hardDrop);
-    // });
 }
