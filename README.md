@@ -1,16 +1,6 @@
 # Tetris
 
-Classic Tetris game
-
-## Table of contents
-
-- [Overview](#overview)
-  - [The features](#the-features)
-  - [Screenshot](#screenshot)
-  - [Links](#links)
-- [My process](#my-process)
-  - [Built with](#built-with)
-- [Author](#author)
+Classic Tetris game built on with HTML Canvas and Vanilla JavaScript.
 
 ## Overview
 
